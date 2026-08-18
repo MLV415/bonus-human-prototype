@@ -3,142 +3,205 @@
     "width": 390,
     "height": 844
   },
-  "generatedAt": "August 17, 2026 at 10:30 PM",
+  "renderedPixelDimensions": {
+    "width": 780,
+    "height": 1688
+  },
+  "generatedAt": "August 17, 2026 at 11:18 PM",
   "captures": [
     {
       "section": "Discover",
       "label": "Default profile - Pet Owner mode",
-      "file": "screenshots/01-discover-default-owner.png"
+      "file": "screenshots/01-discover-default-owner.png",
+      "png": "screenshots/01-discover-default-owner.png",
+      "svg": "svg/01-discover-default-owner.svg"
     },
     {
       "section": "Discover",
       "label": "Another profile - Jordan",
-      "file": "screenshots/02-discover-another-profile.png"
+      "file": "screenshots/02-discover-another-profile.png",
+      "png": "screenshots/02-discover-another-profile.png",
+      "svg": "svg/02-discover-another-profile.svg"
     },
     {
       "section": "Discover",
       "label": "Filters open",
-      "file": "screenshots/03-discover-filters-open.png"
+      "file": "screenshots/03-discover-filters-open.png",
+      "png": "screenshots/03-discover-filters-open.png",
+      "svg": "svg/03-discover-filters-open.svg"
     },
     {
       "section": "Discover",
       "label": "Filters with multiple selections",
-      "file": "screenshots/04-discover-filters-multi-select.png"
+      "file": "screenshots/04-discover-filters-multi-select.png",
+      "png": "screenshots/04-discover-filters-multi-select.png",
+      "svg": "svg/04-discover-filters-multi-select.svg"
     },
     {
       "section": "Discover",
       "label": "No-results state",
-      "file": "screenshots/05-discover-no-results.png"
+      "file": "screenshots/05-discover-no-results.png",
+      "png": "screenshots/05-discover-no-results.png",
+      "svg": "svg/05-discover-no-results.svg"
     },
     {
       "section": "Discover",
       "label": "Bonus Human mode",
-      "file": "screenshots/06-discover-bonus-human-mode.png"
+      "file": "screenshots/06-discover-bonus-human-mode.png",
+      "png": "screenshots/06-discover-bonus-human-mode.png",
+      "svg": "svg/06-discover-bonus-human-mode.svg"
     },
     {
       "section": "Person Profile",
       "label": "Main profile view",
-      "file": "screenshots/07-person-profile-main.png"
+      "file": "screenshots/07-person-profile-main.png",
+      "png": "screenshots/07-person-profile-main.png",
+      "svg": "svg/07-person-profile-main.svg"
     },
     {
       "section": "Person Profile",
       "label": "Alternate gallery photo",
-      "file": "screenshots/08-person-profile-alternate-photo.png"
+      "file": "screenshots/08-person-profile-alternate-photo.png",
+      "png": "screenshots/08-person-profile-alternate-photo.png",
+      "svg": "svg/08-person-profile-alternate-photo.svg"
     },
     {
       "section": "Person Profile",
       "label": "Interested state",
-      "file": "screenshots/09-person-profile-interested.png"
+      "file": "screenshots/09-person-profile-interested.png",
+      "png": "screenshots/09-person-profile-interested.png",
+      "svg": "svg/09-person-profile-interested.svg"
     },
     {
       "section": "Person Profile",
       "label": "Passed state",
-      "file": "screenshots/10-person-profile-passed.png"
+      "file": "screenshots/10-person-profile-passed.png",
+      "png": "screenshots/10-person-profile-passed.png",
+      "svg": "svg/10-person-profile-passed.svg"
     },
     {
       "section": "Matches",
       "label": "Connections",
-      "file": "screenshots/11-matches-connections.png"
+      "file": "screenshots/11-matches-connections.png",
+      "png": "screenshots/11-matches-connections.png",
+      "svg": "svg/11-matches-connections.svg"
     },
     {
       "section": "Matches",
       "label": "Interested profiles",
-      "file": "screenshots/12-matches-interested.png"
+      "file": "screenshots/12-matches-interested.png",
+      "png": "screenshots/12-matches-interested.png",
+      "svg": "svg/12-matches-interested.svg"
     },
     {
       "section": "Matches",
       "label": "Passed profiles",
-      "file": "screenshots/13-matches-passed.png"
+      "file": "screenshots/13-matches-passed.png",
+      "png": "screenshots/13-matches-passed.png",
+      "svg": "svg/13-matches-passed.svg"
     },
     {
       "section": "Matches",
       "label": "Chat conversation",
-      "file": "screenshots/14-matches-chat.png"
+      "file": "screenshots/14-matches-chat.png",
+      "png": "screenshots/14-matches-chat.png",
+      "svg": "svg/14-matches-chat.svg"
     },
     {
       "section": "Pets",
       "label": "Pets and relationships overview",
-      "file": "screenshots/15-pets-overview.png"
+      "file": "screenshots/15-pets-overview.png",
+      "png": "screenshots/15-pets-overview.png",
+      "svg": "svg/15-pets-overview.svg"
     },
     {
       "section": "Pets",
       "label": "Zuki profile",
-      "file": "screenshots/16-zuki-profile.png"
+      "file": "screenshots/16-zuki-profile.png",
+      "png": "screenshots/16-zuki-profile.png",
+      "svg": "svg/16-zuki-profile.svg"
     },
     {
       "section": "Pets",
       "label": "Zuki relationship view",
-      "file": "screenshots/17-zuki-relationship.png"
+      "file": "screenshots/17-zuki-relationship.png",
+      "png": "screenshots/17-zuki-relationship.png",
+      "svg": "svg/17-zuki-relationship.svg"
     },
     {
       "section": "Pets",
       "label": "Relationship-stage progression",
-      "file": "screenshots/18-relationship-stage-progression.png"
+      "file": "screenshots/18-relationship-stage-progression.png",
+      "png": "screenshots/18-relationship-stage-progression.png",
+      "svg": "svg/18-relationship-stage-progression.svg"
     },
     {
       "section": "Pets",
       "label": "Availability and scheduling confirmed",
-      "file": "screenshots/19-availability-confirmed.png"
+      "file": "screenshots/19-availability-confirmed.png",
+      "png": "screenshots/19-availability-confirmed.png",
+      "svg": "svg/19-availability-confirmed.svg"
     },
     {
       "section": "Pets",
       "label": "Care information",
-      "file": "screenshots/20-care-information.png"
+      "file": "screenshots/20-care-information.png",
+      "png": "screenshots/20-care-information.png",
+      "svg": "svg/20-care-information.svg"
     },
     {
       "section": "Feed",
       "label": "Normal feed",
-      "file": "screenshots/21-feed-normal.png"
+      "file": "screenshots/21-feed-normal.png",
+      "png": "screenshots/21-feed-normal.png",
+      "svg": "svg/21-feed-normal.svg"
     },
     {
       "section": "Feed",
       "label": "Post with photo",
-      "file": "screenshots/22-feed-photo-post.png"
+      "file": "screenshots/22-feed-photo-post.png",
+      "png": "screenshots/22-feed-photo-post.png",
+      "svg": "svg/22-feed-photo-post.svg"
     },
     {
       "section": "Feed",
       "label": "Reaction selected",
-      "file": "screenshots/23-feed-reaction-selected.png"
+      "file": "screenshots/23-feed-reaction-selected.png",
+      "png": "screenshots/23-feed-reaction-selected.png",
+      "svg": "svg/23-feed-reaction-selected.svg"
     },
     {
       "section": "Feed",
       "label": "New-post state",
-      "file": "screenshots/24-feed-new-post.png"
+      "file": "screenshots/24-feed-new-post.png",
+      "png": "screenshots/24-feed-new-post.png",
+      "svg": "svg/24-feed-new-post.svg"
     },
     {
       "section": "Profile",
       "label": "Account overview",
-      "file": "screenshots/25-account-overview.png"
+      "file": "screenshots/25-account-overview.png",
+      "png": "screenshots/25-account-overview.png",
+      "svg": "svg/25-account-overview.svg"
     },
     {
       "section": "Profile",
       "label": "Mode and settings controls",
-      "file": "screenshots/26-account-settings.png"
+      "file": "screenshots/26-account-settings.png",
+      "png": "screenshots/26-account-settings.png",
+      "svg": "svg/26-account-settings.svg"
     },
     {
       "section": "Profile",
       "label": "Profile editing state",
-      "file": "screenshots/27-account-editing.png"
+      "file": "screenshots/27-account-editing.png",
+      "png": "screenshots/27-account-editing.png",
+      "svg": "svg/27-account-editing.svg"
     }
-  ]
+  ],
+  "contactSheets": {
+    "png": "bonus-human-contact-sheet.png",
+    "svg": "bonus-human-contact-sheet.svg"
+  },
+  "pdf": "bonus-human-visual-review.pdf"
 }

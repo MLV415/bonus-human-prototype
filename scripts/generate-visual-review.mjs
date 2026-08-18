@@ -13,6 +13,7 @@ const scriptDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectDirectory = path.resolve(scriptDirectory, '..');
 const reviewDirectory = path.join(projectDirectory, 'visual-review');
 const screenshotsDirectory = path.join(reviewDirectory, 'screenshots');
+const svgDirectory = path.join(reviewDirectory, 'svg');
 const viewport = { width: 390, height: 844 };
 const captures = [];
 
@@ -71,8 +72,12 @@ async function waitForServer(url, serverProcess, serverLog) {
 
 async function prepareOutput() {
   await mkdir(screenshotsDirectory, { recursive: true });
+  await mkdir(svgDirectory, { recursive: true });
   for (const name of await readdir(screenshotsDirectory)) {
     if (name.endsWith('.png')) await rm(path.join(screenshotsDirectory, name));
+  }
+  for (const name of await readdir(svgDirectory)) {
+    if (name.endsWith('.svg')) await rm(path.join(svgDirectory, name));
   }
 }
 
@@ -84,7 +89,78 @@ async function imageDataUrl(filePath) {
   return `data:image/png;base64,${(await readFile(filePath)).toString('base64')}`;
 }
 
+function pngDimensions(buffer) {
+  const signature = '89504e470d0a1a0a';
+  if (buffer.subarray(0, 8).toString('hex') !== signature || buffer.subarray(12, 16).toString('ascii') !== 'IHDR') {
+    throw new Error('Visual review screenshot is not a valid PNG.');
+  }
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+}
+
+async function buildSvgArtifacts() {
+  const items = await Promise.all(captures.map(async capture => {
+    const png = await readFile(capture.path);
+    return {
+      ...capture,
+      ...pngDimensions(png),
+      dataUrl: `data:image/png;base64,${png.toString('base64')}`,
+      svgFile: capture.file.replace(/\.png$/i, '.svg'),
+    };
+  }));
+
+  for (const item of items) {
+    const svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${item.width}" height="${item.height}" viewBox="0 0 ${item.width} ${item.height}" role="img" aria-labelledby="title description">
+  <title id="title">${htmlEscape(item.label)}</title>
+  <desc id="description">Actual Bonus Human prototype state: ${htmlEscape(item.section)} - ${htmlEscape(item.label)}. Rendered at ${item.width} by ${item.height} pixels.</desc>
+  <image width="${item.width}" height="${item.height}" preserveAspectRatio="none" href="${item.dataUrl}" />
+</svg>
+`;
+    await writeFile(path.join(svgDirectory, item.svgFile), svg, 'utf8');
+  }
+
+  const columns = 4;
+  const tileWidth = 420;
+  const tilePadding = 18;
+  const imageWidth = 360;
+  const imageHeight = Math.round(imageWidth * viewport.height / viewport.width);
+  const headingHeight = 82;
+  const tileHeight = headingHeight + imageHeight + 2 * tilePadding;
+  const rows = Math.ceil(items.length / columns);
+  const boardWidth = columns * tileWidth + 56;
+  const boardHeaderHeight = 150;
+  const boardHeight = boardHeaderHeight + rows * tileHeight + 42;
+  const tiles = items.map((item, index) => {
+    const column = index % columns;
+    const row = Math.floor(index / columns);
+    const x = 28 + column * tileWidth;
+    const y = boardHeaderHeight + row * tileHeight;
+    const imageX = x + (tileWidth - imageWidth) / 2;
+    const imageY = y + headingHeight;
+    return `
+  <g>
+    <rect x="${x}" y="${y}" width="${tileWidth - 18}" height="${tileHeight - 18}" rx="22" fill="#ffffff" stroke="#ddd8cf" />
+    <text x="${x + 18}" y="${y + 27}" fill="#c86f52" font-family="Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="1.2">${htmlEscape(item.section.toUpperCase())}</text>
+    <text x="${x + 18}" y="${y + 53}" fill="#27332d" font-family="Arial, sans-serif" font-size="17" font-weight="700">${htmlEscape(item.label)}</text>
+    <image x="${imageX}" y="${imageY}" width="${imageWidth}" height="${imageHeight}" preserveAspectRatio="none" href="${item.dataUrl}" />
+  </g>`;
+  }).join('');
+  const contactSheet = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${boardWidth}" height="${boardHeight}" viewBox="0 0 ${boardWidth} ${boardHeight}" role="img" aria-labelledby="title description">
+  <title id="title">Bonus Human visual review contact sheet</title>
+  <desc id="description">${items.length} actual Expo prototype states shown in user-flow order.</desc>
+  <rect width="100%" height="100%" fill="#eee9e1" />
+  <rect width="100%" height="122" fill="#fbf8f2" />
+  <text x="38" y="55" fill="#27332d" font-family="Arial, sans-serif" font-size="36" font-weight="700">Bonus Human - Visual Review</text>
+  <text x="38" y="88" fill="#667169" font-family="Arial, sans-serif" font-size="16">Actual Expo prototype states at ${viewport.width} x ${viewport.height} CSS pixels</text>${tiles}
+</svg>
+`;
+  await writeFile(path.join(reviewDirectory, 'bonus-human-contact-sheet.svg'), contactSheet, 'utf8');
+  return items;
+}
+
 async function buildReviewArtifacts(browser) {
+  const svgItems = await buildSvgArtifacts();
   const items = await Promise.all(captures.map(async capture => ({ ...capture, dataUrl: await imageDataUrl(capture.path) })));
   const generatedAt = new Date().toLocaleString('en-US', { dateStyle: 'long', timeStyle: 'short' });
   const board = await browser.newPage({ viewport: { width: 1500, height: 1000 }, deviceScaleFactor: 1 });
@@ -124,7 +200,23 @@ async function buildReviewArtifacts(browser) {
   await pdfPage.pdf({ path: path.join(reviewDirectory, 'bonus-human-visual-review.pdf'), format: 'A4', printBackground: true, preferCSSPageSize: true });
   await pdfPage.close();
 
-  await writeFile(path.join(reviewDirectory, 'manifest.json'), `${JSON.stringify({ viewport, generatedAt, captures: captures.map(({ section, label, file }) => ({ section, label, file: `screenshots/${file}` })) }, null, 2)}\n`);
+  await writeFile(path.join(reviewDirectory, 'manifest.json'), `${JSON.stringify({
+    viewport,
+    renderedPixelDimensions: svgItems.length ? { width: svgItems[0].width, height: svgItems[0].height } : null,
+    generatedAt,
+    captures: svgItems.map(({ section, label, file, svgFile }) => ({
+      section,
+      label,
+      file: `screenshots/${file}`,
+      png: `screenshots/${file}`,
+      svg: `svg/${svgFile}`,
+    })),
+    contactSheets: {
+      png: 'bonus-human-contact-sheet.png',
+      svg: 'bonus-human-contact-sheet.svg',
+    },
+    pdf: 'bonus-human-visual-review.pdf',
+  }, null, 2)}\n`);
 }
 
 async function main() {
@@ -277,7 +369,7 @@ async function main() {
 
     await buildReviewArtifacts(browser);
     await context.close();
-    process.stdout.write(`\nCreated ${captures.length} screenshots, contact sheet, PDF, and manifest in ${reviewDirectory}\n`);
+    process.stdout.write(`\nCreated ${captures.length} PNG screenshots, ${captures.length} self-contained SVGs, PNG/SVG contact sheets, PDF, and manifest in ${reviewDirectory}\n`);
   } finally {
     if (browser) await browser.close();
     if (expo.exitCode === null) expo.kill('SIGTERM');

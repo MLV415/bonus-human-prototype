@@ -25,4 +25,4 @@ The Jest suite exercises the main prototype flows without launching a simulator 
 npm run visual-review
 ```
 
-This starts a temporary local Expo web server, captures the actual prototype at a consistent 390 × 844 mobile viewport, and rebuilds the screenshots, contact sheet, PDF, and manifest in `visual-review/`. It uses an installed Chrome or Microsoft Edge browser; set `VISUAL_REVIEW_BROWSER` to a browser executable path if neither is found automatically.
+This starts a temporary local Expo web server, captures the actual prototype at a consistent 390 × 844 mobile viewport, and rebuilds the PNG screenshots, self-contained SVG versions, PNG/SVG contact sheets, PDF, and manifest in `visual-review/`. Each SVG embeds the corresponding rendered screenshot at its native pixel dimensions, preserving the actual UI state exactly while remaining a portable UTF-8 SVG file. It uses an installed Chrome or Microsoft Edge browser; set `VISUAL_REVIEW_BROWSER` to a browser executable path if neither is found automatically.
