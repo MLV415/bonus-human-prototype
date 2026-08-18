@@ -1,0 +1,144 @@
+{
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "generatedAt": "August 17, 2026 at 10:30 PM",
+  "captures": [
+    {
+      "section": "Discover",
+      "label": "Default profile - Pet Owner mode",
+      "file": "screenshots/01-discover-default-owner.png"
+    },
+    {
+      "section": "Discover",
+      "label": "Another profile - Jordan",
+      "file": "screenshots/02-discover-another-profile.png"
+    },
+    {
+      "section": "Discover",
+      "label": "Filters open",
+      "file": "screenshots/03-discover-filters-open.png"
+    },
+    {
+      "section": "Discover",
+      "label": "Filters with multiple selections",
+      "file": "screenshots/04-discover-filters-multi-select.png"
+    },
+    {
+      "section": "Discover",
+      "label": "No-results state",
+      "file": "screenshots/05-discover-no-results.png"
+    },
+    {
+      "section": "Discover",
+      "label": "Bonus Human mode",
+      "file": "screenshots/06-discover-bonus-human-mode.png"
+    },
+    {
+      "section": "Person Profile",
+      "label": "Main profile view",
+      "file": "screenshots/07-person-profile-main.png"
+    },
+    {
+      "section": "Person Profile",
+      "label": "Alternate gallery photo",
+      "file": "screenshots/08-person-profile-alternate-photo.png"
+    },
+    {
+      "section": "Person Profile",
+      "label": "Interested state",
+      "file": "screenshots/09-person-profile-interested.png"
+    },
+    {
+      "section": "Person Profile",
+      "label": "Passed state",
+      "file": "screenshots/10-person-profile-passed.png"
+    },
+    {
+      "section": "Matches",
+      "label": "Connections",
+      "file": "screenshots/11-matches-connections.png"
+    },
+    {
+      "section": "Matches",
+      "label": "Interested profiles",
+      "file": "screenshots/12-matches-interested.png"
+    },
+    {
+      "section": "Matches",
+      "label": "Passed profiles",
+      "file": "screenshots/13-matches-passed.png"
+    },
+    {
+      "section": "Matches",
+      "label": "Chat conversation",
+      "file": "screenshots/14-matches-chat.png"
+    },
+    {
+      "section": "Pets",
+      "label": "Pets and relationships overview",
+      "file": "screenshots/15-pets-overview.png"
+    },
+    {
+      "section": "Pets",
+      "label": "Zuki profile",
+      "file": "screenshots/16-zuki-profile.png"
+    },
+    {
+      "section": "Pets",
+      "label": "Zuki relationship view",
+      "file": "screenshots/17-zuki-relationship.png"
+    },
+    {
+      "section": "Pets",
+      "label": "Relationship-stage progression",
+      "file": "screenshots/18-relationship-stage-progression.png"
+    },
+    {
+      "section": "Pets",
+      "label": "Availability and scheduling confirmed",
+      "file": "screenshots/19-availability-confirmed.png"
+    },
+    {
+      "section": "Pets",
+      "label": "Care information",
+      "file": "screenshots/20-care-information.png"
+    },
+    {
+      "section": "Feed",
+      "label": "Normal feed",
+      "file": "screenshots/21-feed-normal.png"
+    },
+    {
+      "section": "Feed",
+      "label": "Post with photo",
+      "file": "screenshots/22-feed-photo-post.png"
+    },
+    {
+      "section": "Feed",
+      "label": "Reaction selected",
+      "file": "screenshots/23-feed-reaction-selected.png"
+    },
+    {
+      "section": "Feed",
+      "label": "New-post state",
+      "file": "screenshots/24-feed-new-post.png"
+    },
+    {
+      "section": "Profile",
+      "label": "Account overview",
+      "file": "screenshots/25-account-overview.png"
+    },
+    {
+      "section": "Profile",
+      "label": "Mode and settings controls",
+      "file": "screenshots/26-account-settings.png"
+    },
+    {
+      "section": "Profile",
+      "label": "Profile editing state",
+      "file": "screenshots/27-account-editing.png"
+    }
+  ]
+}

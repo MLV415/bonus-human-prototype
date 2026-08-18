@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Bonus Human",
+    "slug": "bonus-human",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": ["**/*"],
+    "web": { "bundler": "metro" }
+  }
+}
