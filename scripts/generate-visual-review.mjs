@@ -244,7 +244,7 @@ async function main() {
 
     const reset = async () => {
       await page.goto(`${baseUrl}?visualReview=${Date.now()}`, { waitUntil: 'domcontentloaded' });
-      await page.getByText('Find their people.', { exact: true }).waitFor();
+      await page.getByText('People you’re building with', { exact: true }).waitFor();
       await page.waitForTimeout(200);
     };
     const capture = async (file, section, label) => {
@@ -263,115 +263,87 @@ async function main() {
     };
 
     await reset();
-    await capture('01-discover-default-owner.png', 'Discover', 'Default profile - Pet Owner mode');
-    await page.getByText('Next →', { exact: true }).click();
-    await capture('02-discover-another-profile.png', 'Discover', 'Another profile - Jordan');
+    await capture('01-connections-list.png', 'Connections', 'Connections list - Meet & Greet');
+    await page.getByRole('button', { name: 'Open Haley and Ari Connection' }).click();
+    await capture('02-connection-overview-meet-greet.png', 'Connections', 'Overview - Meet & Greet stage');
+    await page.getByRole('button', { name: 'Chat Connection tab' }).click();
+    await capture('03-connection-chat.png', 'Connections', 'Chat and activity history');
 
     await reset();
+    await page.getByRole('button', { name: 'Open Haley and Ari Connection' }).click();
+    await page.getByText('Schedule Meet & Greet', { exact: true }).click();
+    await capture('04-meet-greet-scheduling.png', 'Connections', 'Meet & Greet scheduling');
+
+    await reset();
+    await page.getByRole('button', { name: 'Open Haley and Ari Connection' }).click();
+    await page.getByText('Skip to Trial Visits', { exact: true }).click();
+    await capture('05-connection-trial-visits.png', 'Connections', 'Trial Visits stage');
+    await page.getByText('Move to Regular Bonus Human', { exact: true }).click();
+    await capture('06-connection-regular-scheduling.png', 'Connections', 'Regular Bonus Human scheduling options');
+
+    await reset();
+    await clickTab('Discover');
+    await capture('07-discover-default.png', 'Discover', 'Default profile');
+    await page.getByText('Next →', { exact: true }).click();
+    await capture('08-discover-another-profile.png', 'Discover', 'Another profile - Jordan');
+
+    await reset();
+    await clickTab('Discover');
     await page.getByRole('button', { name: /Distance · 10 mi filter/ }).click();
-    await capture('03-discover-filters-open.png', 'Discover', 'Filters open');
+    await capture('09-discover-filter-sheet.png', 'Discover', 'Distance filter sheet');
     await page.getByText('Done', { exact: true }).click();
     await page.getByRole('button', { name: /^Schedule filter$/ }).click();
     await page.getByRole('button', { name: 'Thursday PM' }).click();
     await page.getByRole('button', { name: 'Saturday PM' }).click();
     await page.getByText('Done', { exact: true }).click();
     await page.getByRole('button', { name: /^Experience filter$/ }).click();
-    await page.getByText('Senior dog care', { exact: true }).click();
-    await page.getByText('Medication / pills', { exact: true }).click();
+    await page.getByRole('button', { name: 'Senior dog care' }).click();
+    await page.getByRole('button', { name: 'Medication / pills' }).click();
     await page.getByText('Done', { exact: true }).click();
+    await capture('10-discover-filters-applied.png', 'Discover', 'Applied multi-select filters');
+
+    await reset();
+    await clickTab('Discover');
     await page.getByRole('button', { name: /^Home filter$/ }).click();
-    await page.getByText('Apartment', { exact: true }).click();
-    await page.getByText('No yard', { exact: true }).click();
+    await page.getByRole('button', { name: 'Has dogs' }).click();
     await page.getByText('Done', { exact: true }).click();
-    await capture('04-discover-filters-multi-select.png', 'Discover', 'Filters with multiple selections');
+    await capture('11-discover-no-results.png', 'Discover', 'No-results recovery');
 
     await reset();
-    await page.getByRole('button', { name: /^Home filter$/ }).click();
-    await page.getByText('Has dogs', { exact: true }).click();
-    await page.getByText('Done', { exact: true }).click();
-    await capture('05-discover-no-results.png', 'Discover', 'No-results state');
-
-    await reset();
-    await page.getByRole('button', { name: /Switch mode/ }).click();
-    await capture('06-discover-bonus-human-mode.png', 'Discover', 'Bonus Human mode');
-
-    await reset();
+    await clickTab('Discover');
     await page.getByText('View profile', { exact: true }).click();
-    await capture('07-person-profile-main.png', 'Person Profile', 'Main profile view');
+    await capture('12-person-profile-main.png', 'Person Profile', 'Detailed profile');
     await page.getByRole('button', { name: 'Next photo' }).click();
-    await capture('08-person-profile-alternate-photo.png', 'Person Profile', 'Alternate gallery photo');
-    await page.getByText('Interested', { exact: true }).click();
-    await scrollToText('Undo interested');
-    await capture('09-person-profile-interested.png', 'Person Profile', 'Interested state');
-
-    await reset();
-    await page.getByText('View profile', { exact: true }).click();
-    await page.getByText('Pass', { exact: true }).click();
-    await scrollToText('Reconsider pass');
-    await capture('10-person-profile-passed.png', 'Person Profile', 'Passed state');
-
-    await reset();
-    await clickTab('Connections');
-    await capture('11-connections-connected.png', 'Connections', 'Connected');
-
-    await reset();
-    await page.getByText('Interested', { exact: true }).click();
-    await clickTab('Connections');
-    await page.getByText('Interested 1', { exact: true }).click();
-    await capture('12-connections-interested.png', 'Connections', 'Interested profiles');
-
-    await reset();
-    await page.getByText('Pass', { exact: true }).click();
-    await clickTab('Connections');
-    await page.getByText('Passed 1', { exact: true }).click();
-    await capture('13-connections-passed.png', 'Connections', 'Passed profiles');
-
-    await reset();
-    await clickTab('Connections');
-    await page.getByText('Haley & Ari', { exact: true }).click();
-    await capture('14-connections-chat.png', 'Connections', 'Chat conversation');
+    await capture('13-person-profile-photo.png', 'Person Profile', 'Alternate photo');
+    await scrollToText('Next →');
+    await page.getByText('Next →', { exact: true }).click();
+    await capture('14-person-profile-next.png', 'Person Profile', 'Next detailed profile');
 
     await reset();
     await clickTab('Pets');
-    await capture('15-pets-overview.png', 'Pets', 'Pets and Pet Circle overview');
+    await capture('15-pets-owner.png', 'Pets', 'Pet Owner pet access');
     await page.getByText('Zuki', { exact: true }).click();
-    await capture('16-zuki-profile.png', 'Pets', 'Zuki profile');
-    await page.getByText('Relationship', { exact: true }).click();
-    await capture('17-zuki-relationship.png', 'Pets', 'Zuki relationship view');
-    await scrollToText('RELATIONSHIP STAGE');
-    await capture('18-relationship-stage-progression.png', 'Pets', 'Relationship-stage progression');
-    await scrollToText('Request this visit');
-    await page.getByText('Request this visit', { exact: true }).click();
-    await page.getByText('Confirm visit as Mike', { exact: true }).click();
-    await scrollToText('Visit confirmed');
-    await capture('19-availability-confirmed.png', 'Pets', 'Availability and Visit confirmed');
-    await scrollToText('View care info');
-    await page.getByText('View care info', { exact: true }).click();
-    await capture('20-care-information.png', 'Pets', 'Care information');
+    await capture('16-pet-profile.png', 'Pets', 'Zuki Profile');
+    await page.getByText('Care Guide', { exact: true }).click();
+    await capture('17-pet-care-guide.png', 'Pets', 'Zuki Care Guide');
 
     await reset();
     await clickTab('Feed');
-    await capture('21-feed-normal.png', 'Feed', 'Normal feed');
-    await scrollToText('Zuki ate dinner and took her medicine. She is now deeply committed to the couch.');
-    await capture('22-feed-photo-post.png', 'Feed', 'Post with photo');
-    await scrollToText('You and 1 other love this');
-    await capture('23-feed-reaction-selected.png', 'Feed', 'Reaction selected');
-
-    await reset();
-    await clickTab('Feed');
+    await capture('18-feed.png', 'Feed', 'Private pet Feed');
     await page.getByPlaceholder('Share a Zuki update…').fill('Zuki settled in with her tan blanket.');
     await page.getByText('↑', { exact: true }).click();
-    await capture('24-feed-new-post.png', 'Feed', 'New-post state');
+    await capture('19-feed-new-post.png', 'Feed', 'New Feed post');
 
     await reset();
-    await clickTab('Profile');
-    await capture('25-account-overview.png', 'Profile', 'Account overview');
-    await scrollToText('Notifications');
-    await capture('26-account-settings.png', 'Profile', 'Mode and settings controls');
-    await scrollToText('First name');
-    await page.getByLabel('First name').fill('Michael');
-    await page.getByLabel('Short bio').fill('Zuki’s Pet Owner, thoughtfully growing her Pet Circle.');
-    await capture('27-account-editing.png', 'Profile', 'Profile editing state');
+    await page.getByLabel('Open account').click();
+    await capture('20-account-hub.png', 'Account', 'Account hub');
+    await page.getByRole('button', { name: 'Mode' }).click();
+    await capture('21-account-mode.png', 'Account', 'Mode selection');
+
+    await reset();
+    await page.getByLabel('Open account').click();
+    await page.getByRole('button', { name: 'Edit profile' }).click();
+    await capture('22-profile-editing.png', 'Account', 'Expanded profile editing');
 
     await buildReviewArtifacts(browser);
     await context.close();

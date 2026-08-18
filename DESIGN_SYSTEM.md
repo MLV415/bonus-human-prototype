@@ -1,229 +1,149 @@
 # Bonus Human Design System
 
-This document describes the visual language implemented in the Expo prototype. It is a practical source of truth, not a proposal for a new brand. Update it after substantial visual changes.
+This documents the visual and interaction language implemented in the Expo prototype. Preserve the warm, calm identity and update this file after substantial visual changes.
 
-## Visual character
+## Visual character and palette
 
-Warm, trustworthy, modern, calm, and adult. The interface uses warm neutral backgrounds, deep green structure, restrained clay accents, candid photography, rounded object cards, and readable mobile layouts. Avoid marketplace urgency, overly cute styling, decorative complexity, and nested card stacks.
+Warm, trustworthy, modern, adult, and pet-centered without marketplace urgency or excessive cuteness.
 
-## Color palette
-
-### Backgrounds and surfaces
-
-| Token | Value | Use |
+| Token | Value | Primary use |
 | --- | --- | --- |
-| Paper | `#FBF8F2` | App background and warm inset surfaces |
-| White | `#FFFFFF` | Object cards, inputs, selected segments, navigation, and bottom sheets |
-| Sage light | `#E8F0EA` | Positive/selected tint, secondary buttons, confirmations |
-| Clay light | `#F7E9E2` | Warm highlights, milestone tags, profile avatar tint |
-| Navy | `#314B5A` | High-contrast Care checklist surface |
-| Warm gray | `#EEECE6` | Segmented-control and neutral-status backgrounds |
-| Emergency surface | `#FFF9F6` | Emergency and veterinary Care rows |
+| Paper | `#FBF8F2` | App background, sheets |
+| White | `#FFFFFF` | Object cards, inputs, selected segments, navigation |
+| Ink | `#27332D` | Titles and primary copy |
+| Muted | `#667169` | Body, metadata, helper text |
+| Sage | `#507363` | Primary actions, active states, links |
+| Sage light | `#E8F0EA` | Secondary/selected/confirmed surfaces |
+| Clay | `#C86F52` | Warm emphasis, reactions, destructive actions |
+| Clay light | `#F7E9E2` | Warm tags and avatar tint |
+| Gold | `#E3B562` | Progress connectors and checklist emphasis |
+| Navy | `#314B5A` | Care checklist |
+| Line | `#E6E3DC` | Borders and dividers |
 
-### Text, accents, and borders
-
-| Token | Value | Use |
-| --- | --- | --- |
-| Ink | `#27332D` | Titles, primary copy, active labels |
-| Muted | `#667169` | Secondary copy, metadata, helper text |
-| Sage | `#507363` | Primary actions, active states, links, positive status |
-| Clay | `#C86F52` | Warm emphasis, decisions, reactions, destructive actions |
-| Gold | `#E3B562` | Relationship connectors and Care checklist emphasis |
-| Line | `#E6E3DC` | Object-card, input, row, sheet, and navigation borders |
-| Disabled gray | `#CCD2CE` | Disabled/off switch track |
-
-### State rules
-
-- **Selected/active:** sage fill with white text, or sage-light fill with sage text.
-- **Unselected:** paper or white fill, line border, muted text.
-- **Positive/confirmed:** sage or sage light; never clay.
-- **Pending/attention:** warm gold tint with dark gold text.
-- **Destructive:** clay fill with white text. Reserve for removal or irreversible actions, not Pass.
-- **Disabled:** preserve the base style at 45% opacity and prevent interaction.
+Selected/active uses sage/white or sage-light/sage. Confirmed uses sage. Pending uses warm neutral/gold. Destructive uses clay/white. Disabled controls use 45% opacity.
 
 ## Typography
 
-The prototype uses the platform system sans-serif; no custom font is installed.
+Platform system sans-serif, no custom font.
 
-| Role | Current treatment |
+| Role | Treatment |
 | --- | --- |
-| Screen title / H1 | 30/35, weight 800, ink, slightly tight tracking |
-| Section title / H2 | 23/28, weight 800, ink |
-| Object title / H3 | 17/22, weight 800, ink |
-| Discover person name | 25, weight 800, ink |
+| H1 / screen title | 30/35, 800, ink |
+| H2 / section title | 23/28, 800, ink |
+| H3 / object title | 17/22, 800, ink |
+| Discover name | 25, 800, ink |
 | Body | 14/21, muted |
-| Emphasized body / bio | 15–16/22–24, ink |
-| Field and row label | 13–15, weight 700–800 |
-| Eyebrow | 11, weight 800, clay, uppercase, wide tracking |
-| Metadata / location | 13/20, muted |
-| Helper / safety text | 10–12/18, muted |
+| Bio/emphasis | 15–16/22–24, ink |
+| Eyebrow | 11, 800, clay, uppercase, tracked |
+| Metadata/helper | 10–13, muted |
 
-Use sentence case for titles and actions. Uppercase is reserved for short eyebrows, role badges, day abbreviations, and compact status labels.
+Use sentence case for titles/actions. Uppercase is reserved for eyebrows, compact statuses, and day abbreviations.
 
-## Buttons
+## Buttons and controls
 
-- **Primary:** sage fill, white 14px/800 text, 48px minimum height, 14px radius.
-- **Secondary:** sage-light fill with sage text for reversible alternatives such as Pass or Clear filters.
-- **Outline:** white fill, 1.5px sage border, sage text for navigation-like actions.
-- **Destructive:** clay fill and white text only for true removal/destruction.
-- **Disabled:** 45% opacity with interaction disabled.
-- **Small:** 42px minimum height for compact object-level actions.
-- **Icon buttons:** 32–44px target with an accessibility label.
-- **Pressed:** 76% opacity; meaning and color family do not change.
+- **Primary:** sage, white 14/800 text, 48px minimum, 14px radius.
+- **Secondary:** sage light/sage for reversible alternatives.
+- **Outline:** white, 1.5px sage border, sage text.
+- **Destructive:** clay/white only for confirmed destructive actions.
+- **Small:** 42px minimum. **Pressed:** 76% opacity.
+- Icon controls require clear accessibility labels and 32–44px targets.
+- Inputs use white, 1px line border, 12px radius, 44px minimum.
+- Switches use gray off, sage on, white knob.
 
-## Cards and section hierarchy
+## Cards and hierarchy
 
-Cards represent objects or actionable units. Use white surfaces, `#E6E3DC` borders, and restrained elevation only for the primary Discover card.
+Cards represent objects or actionable units: Discover people, pets, Connections, Feed posts, upcoming/requested events, and the actionable Care checklist. Use white, line borders, 14–24px radii, and restrained elevation only on the primary Discover card.
 
-- **Person profile card:** 24px radius, clipped photo, role badge, 18px content padding.
-- **Pet card:** 17px radius, 12px padding, 74px rounded photo, title/body/link stack.
-- **Connection card:** 18px radius, 13px padding, people image, state, preview, and unread count.
-- **Feed card:** 18px radius, 16px padding, optional full-width photo at 13px radius.
-- **Upcoming Visit card:** 16px radius, compact date block, time, and Availability owner.
-- **Care checklist:** actionable navy surface with 18px radius.
-- **Empty state:** 18px radius, centered explanation and recovery actions.
+Section introductions, stage explanations, Care subsections, metadata, settings, and Account groups use headings, spacing, divider rows, and flat grouped surfaces instead of nested cards.
 
-Do not wrap section introductions, Relationship stages, Care subsections, profile metadata, or settings groups in decorative cards. Use section headings, whitespace, subtle dividers, and grouped rows. Relationship stages use top/bottom dividers; profile metadata and prompts use stacked divider rows; notification settings use a simple row.
+## Tags, filters, and staged editing
 
-## Tags, chips, and filters
+- Informational tags: sage light/sage. Warm tags: clay light/clay.
+- Discover filter categories form one horizontal row: Distance, Schedule, Experience, Home.
+- Category chips show applied state only, such as `Distance · 10 mi` or `Schedule · 4`.
+- Tapping opens a bottom sheet with a dim scrim, 24px top corners, handle, close/cancel, Clear, and Done.
+- Changes inside the sheet are temporary. **Done applies**; close, scrim, or system dismissal **discards**.
+- Distance uses a stable finger-tracking 1–100 mile slider.
+- Schedule uses independent weekday AM/PM choices plus reassurance that specifics come after connecting.
+- Schedule, Experience, and Home are multi-select.
 
-- Informational tags use sage-light with sage text.
-- Warm/milestone tags use clay-light with clay text.
-- Filter-category chips appear in one horizontally scrollable Discover row: Distance, Schedule, Experience, Home.
-- Category chips use white/line/sage when inactive and sage/white when active.
-- Active chips show concise state, such as `Distance · 10 mi` or `Schedule · 4`.
-- Tapping a category opens a mobile bottom sheet focused on that category.
-- Option chips are pill-shaped with a line border when unselected and sage fill when selected.
-- Multiple Schedule, Experience, and Home options may remain selected simultaneously.
-- Bottom sheets use a dimmed scrim, 24px top corners, drag indicator, clear close action, and fixed Clear/Done actions.
-- Status labels share the pill silhouette but use stronger 800-weight text.
+## Connection patterns
 
-## Icons and symbols
+- Connection list cards show participants, relevant pet, current stage, and recent context.
+- Opening a card lands on **Overview**, with **Chat** one tap away in a two-option segment.
+- Overview uses tappable participant/pet portraits, a flat stage timeline, one prominent stage-aware next action, event cards, profile/Care links, and a quiet End Connection action.
+- Stages are exactly **Meet & Greet → Trial Visits → Regular Bonus Human**.
+- Skipping and backtracking use secondary/outline actions and remain reversible.
+- Scheduling uses a bottom sheet with Date, Start time, End time, Cancel, and Send request.
+- Chat activity is centered on a sage-light system bubble; human messages retain left/right chat bubbles.
+- Requested events expose Confirm, Decline, and Reschedule. Confirmed events use sage status styling.
+- End Connection uses a centered confirmation dialog, optional reason chips, separate serious-problem link, and clay destructive confirmation.
 
-Bottom navigation uses Expo-compatible Ionicons with consistent 22px sizing. Inactive icons use outlines and muted gray; active icons use filled equivalents and sage.
+## Navigation
+
+Four persistent bottom destinations, in order:
 
 | Destination | Inactive | Active |
 | --- | --- | --- |
 | Discover | `search-outline` | `search` |
-| Pets | `paw-outline` | `paw` |
 | Connections | `people-outline` | `people` |
+| Pets | `paw-outline` | `paw` |
 | Feed | `images-outline` | `images` |
-| Profile | `person-outline` | `person` |
 
-Other compact symbols remain limited to established in-content meanings:
+Ionicons are 22px; inactive is muted, active is sage with a clay position dot. Account is accessed from the top-right avatar, not a bottom tab. Back appears at top left on full-screen details. Existing users may land on Connections; new users may land on Discover.
 
-| Symbol/icon | Meaning |
-| --- | --- |
-| `B` | Bonus Human brand mark |
-| `M` | Mike/account avatar |
-| `‹` | Back navigation |
-| `↑` | Send/post action |
-| `♥` / `♡` | Selected/unselected Feed reaction |
-| `⌖` | General, non-precise location |
-| `◷` | Routine/time |
-| `✚` | Health/medical information |
-| `⌂` | Home or physical limits |
-| `✓` | Completed or confirmed state |
-| `›` / `→` | Forward navigation |
+## Account and Pets patterns
 
-Do not assign a new meaning to an existing symbol without updating this table.
+- Account first opens a hub of divider rows: Mode, Edit profile, Manage pets (Pet Owner only), Settings, Help, About.
+- Development tools never appear in the user-facing Account experience.
+- Expanded profile editing reuses the same Schedule, Experience, and Home chip patterns used by Discover.
+- Pets shows one role-specific group at a time.
+- Pet detail uses **Profile | Care Guide**. Connection management never appears as a pet sub-tab.
 
-## Navigation patterns
+## Photos
 
-- Five persistent tabs: Discover, Pets, Connections, Feed, Profile.
-- Icon size, label spacing, active color, and selected-state dot are consistent across all five tabs.
-- Top bars use the brand mark or Back on the left, centered title, and account avatar on the right when appropriate.
-- Full-screen details temporarily hide bottom navigation and provide Back.
-- Care remains nested under a pet/Relationship.
-- Connections contains Connected, Interested, and Passed.
-- Interested and Passed never appear as primary Discover sections.
-- `UI Gallery (Dev)` is available from Profile in development builds.
-- Segment controls use white for the active choice on a warm-gray track.
-
-## Photo treatment
-
-- Use candid, natural photography with consistent identity throughout each gallery.
-- Discover photo: full card width × 300px.
-- Person profile hero: full width × 330px.
-- Pet hero: full width × 300px with 22px radius.
-- Feed photo: full card width × 245px with 13px radius.
-- List thumbnails: 58–76px with 14–16px radius.
-- Use `cover` cropping and keep faces within the central safe area.
-- Galleries advance by tapping the photo; do not overlay arrows or instructions.
-- Position dots sit in a white strip below the photo.
+- Discover: full card width × 300px. Person detail: full width × 330px. Pet hero: × 300px, 22px radius. Feed: × 245px, 13px radius.
+- Use cover cropping and keep faces inside the central safe area.
+- Never place role text or navigation arrows over faces.
+- Tap advances photos; small position dots sit in a white strip below.
 
 ## Empty states
 
-- Use a white bordered object with concise H3 copy, one explanatory sentence, and one or two recovery actions.
-- Name the actual reason, for example: “No profiles fit these filters.”
-- Prefer an immediate primary recovery action and a secondary reset action.
-- Never refer to unavailable concepts such as saved lists.
-
-## Form controls
-
-- Inputs use white fill, 1px line border, 12px radius, 44px minimum height, and ink text.
-- Labels sit above inputs in 11px bold muted text.
-- Multiline inputs use an 82px minimum height and top-aligned text.
-- Switches use disabled gray when off and sage when on, with a white knob.
-- Distance uses an accessible adjustable slider with a visible value and 1–100 mile endpoints.
-- Schedule pairs each weekday with independent AM and PM chips.
-
-## Status and Relationship language
-
-- **Confirmed/complete:** sage family.
-- **Pending/awaiting:** gold family.
-- **Neutral/information:** warm gray and muted text.
-- **Interested/Passed badge:** clay for visibility on photography; both remain reversible.
-- Canonical Relationship stages are exactly: **Meet & Greet → Trial Visits → Regular Bonus Human**.
+White bordered 18px-radius object, concise H3, one explanation, and immediate recovery. Name the actual cause. Filter empty states offer Increase distance and Clear filters.
 
 ## Spacing and radius
 
 - Screen horizontal padding: 20px.
-- Top-level section spacing: generally 26px before and 14px after.
-- Object-card padding: 12–18px.
-- Compact gaps: 7–10px for chips and tightly related controls.
-- Standard action gap: 12px.
-- Bottom content breathing room: 34px.
-- Pills/chips/status: 99px radius.
-- Inputs and compact controls: 10–14px radius.
-- Standard object cards: 14–18px radius.
-- Hero cards/images: 22–24px radius.
+- Section spacing: generally 26px before, 14px after.
+- Object padding: 12–18px; compact gaps 7–10px; action gap 12px.
+- Bottom breathing room: 34px.
+- Pills/chips: 99px radius; inputs/compact controls: 10–14px; object cards: 14–18px; heroes: 22–24px.
 
 ## Interaction states
 
-- **Pressed:** 76% opacity for standard buttons.
-- **Selected:** sage fill/white text or white active segment on gray.
-- **Disabled:** 45% opacity and disabled accessibility state.
-- **Active tab:** filled sage Ionicon, sage label, small clay dot.
-- **Photo tap:** advances one image and wraps.
-- **Reaction:** outline heart becomes filled clay heart; count and copy update reversibly.
-- **Decision:** action changes to Undo interested or Reconsider pass.
-- **Filter category:** opens one bottom sheet; Done applies the current local state immediately.
+- Decision: Interested/Passed changes to Undo/Reconsider and persists during detailed Previous/Next browsing.
+- Photo: tap advances and wraps.
+- Feed reaction: outline heart becomes clay filled and reverses.
+- Active tab: filled sage Ionicon, sage label, clay dot.
+- Connection Overview and Chat read/write one shared mocked state.
+- Meaningful Connection changes append activity to Chat.
 
-## Terminology rules
+## Terminology
 
-- **Discover:** browse people or pets who could become a Connection.
-- **Interested:** interest expressed but not yet mutual; reverse with **Undo interested**.
-- **Passed:** reversible choice not to pursue a profile; action is **Pass**, reversal is **Reconsider pass**.
-- **Connection:** mutual-interest, pre-Relationship state where messaging and meeting begin.
-- **Relationship:** active bond between a specific pet and Bonus Human after connecting.
-- **Relationship stage:** **Meet & Greet → Trial Visits → Regular Bonus Human**.
-- **Pet Circle:** Pet Owners and Bonus Humans with active Relationships to a pet.
-- **Pet Owner:** person responsible for the pet.
-- **Bonus Human:** person building an ongoing, non-ownership Relationship with the pet.
-- **Availability:** times the Pet Owner offers for pet time.
-- **Visit:** a proposed or confirmed period of pet time.
-- **Care:** instructions and information needed to safely care for the pet.
-- **Feed:** private pet-centered updates and photos for the Pet Circle.
+- **Connection** is the only long-lived structural relationship concept.
+- **Connection stage** is Meet & Greet, Trial Visits, or Regular Bonus Human.
+- **Interested** and **Passed** are reversible pre-Connection decisions.
+- **Pet Owner**, **Bonus Human**, **Availability**, **Visit**, **Care Guide**, and **Feed** use the meanings in `PRODUCT_DESIGN.md`.
+- **Pet Circle** may appear only as occasional warm brand copy, not a status, object, or navigation label.
+- Avoid Match/Matches, Association, and structural uses of Relationship.
 
-Avoid marketplace terms such as provider, customer, booking, job, and free care.
+## Known constraints
 
-## Known visual constraints
-
-- In-content Unicode symbols can still vary slightly across platforms; bottom navigation no longer depends on them.
-- Some object-card radii differ by hierarchy and density within the documented ranges.
-- System-font metrics vary slightly by platform because no custom font is installed.
+- In-content Unicode symbols can vary by platform; bottom navigation uses Ionicons.
+- System-font metrics vary slightly across platforms.
+- Date/time inputs are intentionally lightweight prototype fields.
+- Physical-iPhone touch, safe-area, keyboard, and screen-reader behavior require manual review.
 
 ## Maintenance rule
 
-Update this document after substantial changes to colors, typography, spacing, reusable controls, imagery, interactions, or terminology. Verify new patterns in `UI Gallery (Dev)` before considering the change complete.
+Update this document after changes to reusable visuals, navigation, components, states, terminology, or interaction patterns. Regenerate the visual-review package after substantial UI changes.

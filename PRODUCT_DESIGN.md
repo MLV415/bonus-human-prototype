@@ -2,138 +2,130 @@
 
 ## Product purpose
 
-Bonus Human helps Pet Owners and animal-loving people form ongoing, non-transactional pet-sharing Relationships. The Pet Owner remains responsible for the pet; a Bonus Human becomes part of the pet's Pet Circle through repeated, mutually beneficial time together. This is not a paid pet-sitting marketplace.
+Bonus Human helps Pet Owners and animal-loving people form ongoing, non-transactional Connections centered on a pet. Pet Owners remain responsible; Bonus Humans build meaningful, repeated bonds without ownership or payment. This is not a pet-sitting marketplace.
 
-## Target users
+## Target users and modes
 
-- **Pet Owners** who want to thoughtfully grow their pet's Pet Circle.
-- **Bonus Humans** who want a meaningful animal Relationship but cannot or do not currently want to own a pet.
-- The current prototype is dog-focused, while the concept may later support other companion animals.
+- **Pet Owner:** owns and remains responsible for a pet; discovers potential Bonus Humans.
+- **Bonus Human:** wants an ongoing animal bond without current pet ownership; discovers Pet Owners and pets.
+- A user operates primarily in one mode at a time. Mode switching lives in Account, not Discover.
+- The current prototype is dog-focused.
 
-## Core user modes
+## Core product model
 
-- **Pet Owner mode:** discovers potential Bonus Humans.
-- **Bonus Human mode:** discovers Pet Owners and their pets.
-- The current mode is visible and switchable from a compact Discover control and from Profile.
+- Mutual interest creates a **Connection** between people, with a relevant pet as supporting context.
+- Connection is the single long-lived relationship object. It does not become a differently named object later.
+- A Connection may progress through: **Meet & Greet → Trial Visits → Regular Bonus Human**.
+- Progression is guided but optional and reversible.
+- **Pet Circle** is optional warm copy only, never a navigation concept, data type, or status.
 
-## Key product principles
+## Key principles
 
-1. Relationships, not transactions: no payments or marketplace framing.
-2. Pet wellbeing first: Pet Owners retain responsibility and Care information remains clear.
-3. Trust grows gradually: Interested can become a Connection; a Connection can progress into a pet-specific Relationship.
-4. Both people benefit: Bonus Humans volunteer for meaningful time with a pet.
-5. Reversible early choices: Interested and Passed decisions can be reviewed and undone.
-6. Useful over exhaustive: profiles and Care details should be visual and easy to scan.
-7. Privacy by default: the Feed and Care details belong to a pet's Pet Circle.
+1. Connections, not transactions: no payments, jobs, bookings, or marketplace urgency.
+2. Pet wellbeing first: the Pet Owner stays responsible and Care remains easy to find.
+3. Trust grows gradually through chat, meetings, and time together.
+4. Both sides benefit from the Connection.
+5. Early choices and Connection stages remain reversible.
+6. People can reach pet and Care information quickly without entering Connection management.
+7. Mocked state should stay internally consistent across every surface.
 
-## Current information architecture
+## Information architecture and navigation
 
-- **Discover:** mode-aware browsing of people and pets who could become a Connection, with compact category filters and profile details.
-- **Pets:** owned pets and pets connected through a Bonus Human Relationship.
-  - Pet profile and Pet Circle
-  - Relationship stage
-  - Availability and Visits
-  - Care information
-- **Connections:** Connected, Interested, and Passed profiles plus local prototype chat.
-- **Feed:** private pet-centered updates, photos, posting, and reactions for the Pet Circle.
-- **Profile:** account information, photos, preferences, user mode, and development-only access to the UI Gallery.
+Persistent navigation, in journey order:
 
-## Main user journey
+1. **Discover** — browse role-appropriate people/pets and filter the current result set.
+2. **Connections** — Connected, Interested, Passed; open a Connection home.
+3. **Pets** — role-specific quick access to pet Profile and Care Guide.
+4. **Feed** — private pet-centered updates, photos, posting, and reactions.
 
-1. Choose Pet Owner or Bonus Human mode.
-2. Use Discover to browse role-appropriate profiles and optionally filter by Distance, Schedule, Experience, or Home.
-3. Open a profile and mark Interested or Pass.
-4. Revisit Interested and Passed choices under Connections.
-5. Mutual interest creates a Connection where messaging and a Meet & Greet can begin.
-6. Create a pet-specific Relationship and progress through Meet & Greet → Trial Visits → Regular Bonus Human.
-7. Review Availability, propose and confirm a Visit, consult Care, and share private Feed updates with the Pet Circle.
+The top-right avatar opens an **Account hub** with Mode, Edit profile, Manage pets (Pet Owner mode), Settings, Help, and About.
 
-## Current top-level navigation
+The default landing screen is state-aware: users without Connections land on Discover; users with an active Connection land on Connections. The current Mike demo therefore lands on Connections.
 
-1. Discover
-2. Pets
-3. Connections
-4. Feed
-5. Profile
+## Main journey
 
-Care remains nested under the relevant pet and Relationship rather than occupying a top-level tab.
+1. Choose Pet Owner or Bonus Human mode in Account.
+2. Browse Discover; optionally stage and apply Distance, Schedule, Experience, and Home filters.
+3. Open detailed profiles, browse Previous/Next within the filtered results, and mark Interested or Passed.
+4. Mutual interest creates a Connection.
+5. Open the Connection home. Overview is the default; Chat is one tap away.
+6. Use stage-aware next actions to schedule a Meet & Greet, trial visit, one-off visit, or recurring schedule.
+7. Scheduling actions appear in both Overview and Chat history and can be confirmed, declined, or rescheduled locally.
+8. Use Pets for direct pet Profile/Care Guide access and Feed for private updates.
+9. If needed, end the Connection with confirmation, optional feedback, and an optional serious-problem report path.
 
-## Major features currently implemented
+## Major implemented features
 
-- Mocked, role-aware Discover browsing with previous/next navigation.
-- Horizontally scrollable Distance, Schedule, Experience, and Home filter-category chips.
-- Mobile bottom sheets for editing one filter category at a time.
-- A 1–100 mile Distance slider with a visible radius.
-- Multi-select Schedule by weekday and AM/PM.
-- Multi-select dog-care Experience and Home filters.
-- AND filtering logic and direct no-results recovery through Increase distance and Clear filters.
-- Visual person and pet profiles with tap-to-advance photo galleries.
-- Interested, Pass, undo, and reconsider flows housed under Connections.
-- Mocked Connection between Mike, Zuki, Haley, and Ari with local chat.
-- Multi-pet information architecture for owned pets and pet Connections.
-- Relationship stages: Meet & Greet → Trial Visits → Regular Bonus Human.
-- Lightweight Availability, Visit proposal, and Pet Owner confirmation.
-- Zuki's private Feed with local posting and reversible reactions.
-- Scannable routine, medication, behavior, emergency, and veterinary Care details.
-- Editable local account details, mocked photo management, notification preference, and mode switching.
-- Development-only UI Gallery for reusable visual patterns.
-- Behavioral Jest tests for the main prototype flows.
+- Role-aware Discover browsing with tap galleries and card/detail Previous/Next controls.
+- Compact horizontal filter categories and focused bottom sheets.
+- Smooth 1–100 mile slider; multi-select weekday AM/PM, experience, and home filters.
+- Filter changes remain temporary until Done; cancel/scrim dismissal discards them.
+- AND filtering plus Increase distance and Clear filters recovery.
+- Shared profile data for display, filtering, and expanded Account profile editing.
+- Four-tab navigation and deterministic Connections landing for the current demo.
+- Connections list with Connected, Interested, and Passed (no lifetime counters).
+- Connection Overview/Chat toggle and tappable people/pet links.
+- Stage-aware, reversible Connection workflow.
+- Local date/start/end scheduling for Meet & Greet, trial, and one-off visits.
+- Simplified recurring schedule editing at Regular Bonus Human stage.
+- Human chat plus scheduling/activity history using shared Connection state.
+- Role-specific Pets hub and pet **Profile | Care Guide** tabs.
+- Zuki Feed with posting and reversible reactions.
+- Account hub, mode switching, expanded profile editor, pet management link, and settings.
+- Confirmed End Connection flow with optional reason and serious-problem path.
+
+## Primary demo state
+
+- Mike and Haley & Ari are connected around Zuki.
+- Current stage: **Meet & Greet**.
+- They are planning their first Meet & Greet.
+- Trial Visits and Regular Bonus Human have not been reached.
+- Later stages exist as interactive review states, not contradictory default data.
 
 ## Important design decisions
 
-- Discover stays focused on one profile at a time; decision history lives in Connections.
-- Filter categories use compact horizontal chips and focused bottom sheets to preserve browsing space.
-- Filters use AND logic: a profile must satisfy every selected Schedule, Experience, and Home requirement.
-- Same-role profiles are hidden from Discover according to the active mode.
-- Cards represent objects or actionable units: people, pets, Connections, Feed posts, and upcoming Visits.
-- Section introductions, Relationship stages, Care subsections, profile metadata, and settings prefer headings, spacing, rows, and dividers over nested cards.
-- Photo galleries advance by tapping the image. Indicators sit below images so controls do not cover faces.
-- A Bonus Human proposes a Visit from Pet Owner-provided Availability; the Pet Owner confirms it.
-- All data and interactions are local and mocked to keep the prototype easy to understand and iterate.
-- Visual implementation and terminology follow `DESIGN_SYSTEM.md`; substantial visual changes must update that document and the UI Gallery.
+- Connection management belongs under Connections, never as a pet sub-tab.
+- Pets is present in both modes, but shows only owned pets in Pet Owner mode or connected pets in Bonus Human mode.
+- Pet Profile is descriptive; Care Guide is practical and safety-oriented.
+- Discover has no mode banner or photo-role overlay; role control belongs in Account.
+- Filter sheets separate draft state from applied state.
+- Cards represent objects or actionable units; explanatory sections use spacing and dividers.
+- All current behavior is local and mocked for learnability.
 
 ## Canonical terminology
 
-- **Discover:** browse people or pets who could become a Connection.
-- **Interested:** interest expressed but not yet mutual.
-- **Passed:** a reversible choice not to pursue a profile.
-- **Connection:** mutual interest; messaging and meeting can begin before an active Relationship.
-- **Relationship:** an active bond between a specific pet and Bonus Human after connecting.
-- **Relationship stage:** Meet & Greet → Trial Visits → Regular Bonus Human.
-- **Pet Circle:** active Pet Owners and Bonus Humans around a pet.
-- **Availability:** times a Pet Owner offers for a Bonus Human to spend with the pet.
+- **Connection:** the single long-lived people-to-people object created by mutual interest.
+- **Connection stage:** Meet & Greet, Trial Visits, or Regular Bonus Human.
+- **Interested / Passed:** reversible pre-Connection profile decisions.
+- **Availability:** broad times offered for pet time.
 - **Visit:** a proposed or confirmed period of pet time.
-- **Care:** information needed to safely care for a pet.
-- **Feed:** private pet-centered updates and photos shared with the Pet Circle.
+- **Care Guide:** practical instructions needed to care safely for a pet.
+- **Feed:** private pet-centered updates and photos.
+- Avoid Match/Matches, Association, and structural uses of Relationship or Pet Circle.
 
-## Known open questions
+## Open questions
 
-- Whether filters within a category should use AND or OR logic in production.
-- How mutual interest should be communicated and when chat should unlock.
-- Whether Availability belongs primarily to a pet, a Relationship, or both.
-- What identity, reference, background-check, and safety tools are appropriate.
-- How multiple Pet Owners or Bonus Humans should share permissions.
-- Which Care updates should require acknowledgement or an audit trail.
+- Production permissions for multiple Pet Owners or Bonus Humans.
+- Identity, references, background checks, moderation, and serious-report handling.
+- Notification rules and ownership of scheduling responses.
+- Whether filter options within one category should remain AND-based in production.
+- Recurring schedule exceptions and timezone behavior.
 
 ## Deferred ideas
 
-- Authentication, persistent accounts, and cloud storage.
-- Real recommendations, ranking, messaging, push notifications, and calendars.
-- Precise location, maps, and travel-time estimates.
-- Verification, references, safety reporting, and emergency workflows.
-- Additional pet species, multiple complete pet profiles, and configurable permissions.
-- Production accessibility, analytics, moderation, and privacy controls.
+- Onboarding, authentication, cloud persistence, real messaging, push notifications, and calendar sync.
+- Real recommendations, precise location, maps, and travel time.
+- Production reporting, blocking, verification, privacy, analytics, and accessibility audits.
+- Multiple complete pets/species and complex mixed-role accounts.
 
-## Current prototype limitations
+## Prototype limitations
 
-- All people, pets, distances, Availability, messages, decisions, Visits, and posts are mocked.
-- Changes reset when the app reloads; there is no backend or persistent storage.
-- The slider and filters demonstrate interaction but do not use real location data.
-- Chat, scheduling, account editing, photo management, and notifications are local demonstrations only.
-- Mochi has a Connection placeholder rather than a complete pet and Care profile.
-- There is no authentication, payment, real messaging, location tracking, or recommendation algorithm.
-- Physical-device layout, gestures, keyboard behavior, and screen-reader behavior still require iPhone review.
+- Data resets on reload; there is no backend.
+- Scheduling inputs accept local text rather than a production date/time picker.
+- Reporting, Help, About, photos, and notifications are mocked or placeholder flows.
+- The demo has one complete Connection and one complete pet.
+- Physical-device gestures, keyboard behavior, safe areas, and screen-reader behavior still require iPhone review.
 
 ## Maintenance rule
 
-Update this document after every substantial product or workflow change. Update `DESIGN_SYSTEM.md` after every substantial visual-system change.
+Update this file after substantial product/workflow changes and `DESIGN_SYSTEM.md` after substantial visual or interaction-system changes.

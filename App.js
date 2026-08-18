@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import {
   Image,
   Modal,
@@ -30,21 +30,21 @@ const C = {
   gold: '#E3B562', line: '#E6E3DC', navy: '#314B5A',
 };
 
-const profiles = [
+const initialProfiles = [
   {
     id: 'haley', role: 'bonus', type: 'BONUS HUMANS', name: 'Haley & Ari', location: 'North Portland · 2.4 mi', distance: 2.4, image: peopleImage,
     photos: [peopleImage, peopleWalkImage],
     intro: 'Homebody adventurers hoping to become trusted aunties to a small dog nearby.',
-    looking: 'A steady, long-term relationship — weeknight hangs and occasional weekends.',
+    looking: 'A steady, long-term connection — weeknight hangs and occasional weekends.',
     highlights: ['Senior-dog experience', 'Quiet home', 'Free Thu evenings'],
     attributes: { Location: ['2.4 miles away', 'North Portland'], Availability: ['Thursday evenings', 'Weekends'], Experience: ['Senior pets', 'Rescue volunteer'], 'Home environment': ['Apartment', 'No yard', 'Quiet home'] },
     filterData: { schedule: ['Thursday PM', 'Saturday PM', 'Sunday PM'], experience: ['Senior dog care', 'Medication / pills', 'Special diets'], home: ['Apartment', 'No yard'] },
     facts: [
       ['Our pet experience', 'Haley grew up with terriers; Ari volunteered with senior rescues for three years.'],
-      ['Why this relationship', 'We miss the everyday companionship of a dog and want to invest in one bond, not rotate through pet-sitting gigs.'],
+      ['Why this connection', 'We miss the everyday companionship of a dog and want to invest in one bond, not rotate through pet-sitting gigs.'],
       ['Why no pet right now', 'Our lease and travel rhythm make full-time ownership a poor fit, but regular local time feels sustainable.'],
       ['Availability', 'Thursday evenings, one weekend afternoon most weeks, and occasional overnights after trust is built.'],
-      ['The relationship we hope for', 'A familiar dog who is genuinely excited to see us — and people we can communicate openly with.'],
+      ['The connection we hope for', 'A familiar dog who is genuinely excited to see us — and people we can communicate openly with.'],
     ],
     prompts: [['A small joy', 'Slow neighborhood walks with a coffee.'], ['We are known for', 'Following instructions and sending excellent photo updates.']],
   },
@@ -58,7 +58,7 @@ const profiles = [
     filterData: { schedule: ['Thursday PM', 'Saturday AM', 'Saturday PM', 'Sunday AM'], experience: ['Senior dog care', 'Medication / pills', 'Mobility assistance'], home: ['Apartment', 'No yard'] },
     facts: [
       ['About us', 'Zuki and I are a quiet little household. She has been my constant companion since she was a puppy.'],
-      ['Why a bonus human', 'I want Zuki to have another safe, loving relationship — not simply backup care when I am busy.'],
+      ['Why a bonus human', 'I want Zuki to have another safe, loving connection — not simply backup care when I am busy.'],
       ['Ideal arrangement', 'One regular evening each week, with flexibility for relaxed weekends once everyone is comfortable.'],
       ['What matters most', 'Patience, reliability, and noticing Zuki’s cues. Her comfort always sets the pace.'],
     ],
@@ -72,7 +72,7 @@ const profiles = [
     highlights: ['Large-dog experience', 'Fenced yard', 'Weekend mornings'],
     attributes: { Location: ['6.8 miles away', 'Sellwood'], Availability: ['Weekend mornings'], Experience: ['General pet care', 'Large dogs'], 'Home environment': ['House', 'Fenced yard'] },
     filterData: { schedule: ['Friday PM', 'Saturday AM', 'Sunday AM'], experience: ['Puppy care', 'Behavioral needs'], home: ['House', 'Yard'] },
-    facts: [['Our pet experience', 'Twelve years caring for an easygoing lab mix.'], ['Why this relationship', 'I miss the rhythm of walks and companionship without being ready to adopt again.'], ['Why no pet right now', 'I travel for work several times each quarter.'], ['Availability', 'Saturday and Sunday mornings, plus some Friday evenings.'], ['The relationship we hope for', 'One nearby dog and household I can know well over time.']],
+    facts: [['Our pet experience', 'Twelve years caring for an easygoing lab mix.'], ['Why this connection', 'I miss the rhythm of walks and companionship without being ready to adopt again.'], ['Why no pet right now', 'I travel for work several times each quarter.'], ['Availability', 'Saturday and Sunday mornings, plus some Friday evenings.'], ['The connection we hope for', 'One nearby dog and household I can know well over time.']],
     prompts: [['Perfect Saturday', 'A long walk, a good sandwich, and a nap.'], ['Green flag', 'Clear expectations and a pet-first pace.']],
   },
   {
@@ -126,7 +126,7 @@ function PhotoGallery({ photos, style }) {
 }
 
 function FilterChip({ label, accessibilityLabel, selected, onPress }) {
-  return <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} accessibilityState={{ selected }} onPress={onPress} style={[styles.filterChip, selected && styles.filterChipActive]}><Text style={[styles.filterChipText, selected && styles.filterChipTextActive]}>{label}</Text></Pressable>;
+  return <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel || label} accessibilityState={{ selected }} onPress={onPress} style={[styles.filterChip, selected && styles.filterChipActive]}><Text style={[styles.filterChipText, selected && styles.filterChipTextActive]}>{label}</Text></Pressable>;
 }
 
 const DEFAULT_FILTERS = { radius: 10, schedule: [], experience: [], home: [] };
@@ -136,23 +136,26 @@ const HOME_OPTIONS = ['Apartment', 'House', 'Yard', 'No yard', 'Has dogs', 'Has 
 
 function DistanceSlider({ value, onChange }) {
   const [width, setWidth] = useState(1);
+  const [left, setLeft] = useState(0);
+  const trackRef = useRef(null);
   const updateFromTouch = event => {
-    const x = Math.max(0, Math.min(width, event.nativeEvent.locationX || 0));
+    const pageX = event.nativeEvent.pageX;
+    const x = Math.max(0, Math.min(width, pageX == null ? (event.nativeEvent.locationX || 0) : pageX - left));
     onChange(Math.round(1 + (x / width) * 99));
   };
   const adjust = direction => onChange(Math.max(1, Math.min(100, value + direction * 10)));
   const percentage = ((value - 1) / 99) * 100;
   return <View style={styles.distanceBlock}>
     <View style={styles.distanceHeader}><Text style={styles.factTitle}>Distance / radius</Text><Text style={styles.distanceValue}>{value} {value === 1 ? 'mile' : 'miles'}</Text></View>
-    <View
+    <View ref={trackRef}
       accessibilityRole="adjustable"
       accessibilityLabel="Distance radius"
       accessibilityValue={{ min: 1, max: 100, now: value, text: `${value} ${value === 1 ? 'mile' : 'miles'}` }}
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={event => adjust(event.nativeEvent.actionName === 'increment' ? 1 : -1)}
-      onLayout={event => setWidth(event.nativeEvent.layout.width)}
+      onLayout={event => { setWidth(event.nativeEvent.layout.width); trackRef.current?.measureInWindow?.(x => setLeft(x)); }}
       onStartShouldSetResponder={() => true}
-      onMoveShouldSetResponder={() => true}
+      onMoveShouldSetResponderCapture={() => true}
       onResponderGrant={updateFromTouch}
       onResponderMove={updateFromTouch}
       style={styles.sliderTrack}
@@ -164,20 +167,20 @@ function DistanceSlider({ value, onChange }) {
   </View>;
 }
 
-function FilterSheet({ category, filters, setFilters, onDone }) {
+function FilterSheet({ category, filters, setFilters, onDone, onCancel }) {
   const toggle = (key, value) => setFilters(current => ({ ...current, [key]: current[key].includes(value) ? current[key].filter(item => item !== value) : [...current[key], value] }));
   const clearCategory = () => setFilters(current => ({ ...current, [category]: category === 'radius' ? DEFAULT_FILTERS.radius : [] }));
   const titles = { radius: ['DISTANCE', 'How nearby?'], schedule: ['SCHEDULE', 'When could a visit work?'], experience: ['EXPERIENCE', 'What experience matters?'], home: ['HOME', 'What home environment fits?'] };
   const [eyebrow, title] = titles[category] || titles.radius;
-  return <Modal visible transparent animationType="slide" onRequestClose={onDone}>
+  return <Modal visible transparent animationType="slide" onRequestClose={onCancel}>
     <View style={styles.sheetLayer}>
-      <Pressable accessibilityLabel="Close filters" onPress={onDone} style={styles.sheetScrim} />
+      <Pressable accessibilityLabel="Dismiss filters" onPress={onCancel} style={styles.sheetScrim} />
       <View style={styles.filterSheet}>
         <View style={styles.sheetHandle} />
-        <View style={styles.sheetHeader}><View><Text style={styles.eyebrow}>{eyebrow}</Text><Text style={styles.h2}>{title}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Close filter sheet" onPress={onDone} style={styles.sheetClose}><Ionicons name="close" size={22} color={C.ink} /></Pressable></View>
+        <View style={styles.sheetHeader}><View><Text style={styles.eyebrow}>{eyebrow}</Text><Text style={styles.h2}>{title}</Text></View><Pressable accessibilityRole="button" accessibilityLabel="Cancel filter changes" onPress={onCancel} style={styles.sheetClose}><Ionicons name="close" size={22} color={C.ink} /></Pressable></View>
         <ScrollView contentContainerStyle={styles.sheetContent} showsVerticalScrollIndicator={false}>
           {category === 'radius' && <DistanceSlider value={filters.radius} onChange={radius => setFilters(current => ({ ...current, radius }))} />}
-          {category === 'schedule' && <><Text style={styles.filterHelp}>Choose every day and time that could work.</Text>{DAYS.map(day => <View key={day} style={styles.scheduleRow}><Text style={styles.scheduleDay}>{day}</Text><View style={styles.scheduleTimes}>{['AM', 'PM'].map(period => { const value = `${day} ${period}`; return <FilterChip key={value} label={period} accessibilityLabel={value} selected={filters.schedule.includes(value)} onPress={() => toggle('schedule', value)} />; })}</View></View>)}</>}
+          {category === 'schedule' && <><Text style={styles.filterHelp}>Choose times that could generally work. You can work out specific timing and commitments once you connect.</Text>{DAYS.map(day => <View key={day} style={styles.scheduleRow}><Text style={styles.scheduleDay}>{day}</Text><View style={styles.scheduleTimes}>{['AM', 'PM'].map(period => { const value = `${day} ${period}`; return <FilterChip key={value} label={period} accessibilityLabel={value} selected={filters.schedule.includes(value)} onPress={() => toggle('schedule', value)} />; })}</View></View>)}</>}
           {category === 'experience' && <><Text style={styles.filterHelp}>Select all dog-care experience that matters.</Text><View style={styles.filterChips}>{EXPERIENCE_OPTIONS.map(value => <FilterChip key={value} label={value} selected={filters.experience.includes(value)} onPress={() => toggle('experience', value)} />)}</View></>}
           {category === 'home' && <><Text style={styles.filterHelp}>Select every home requirement that applies.</Text><View style={styles.filterChips}>{HOME_OPTIONS.map(value => <FilterChip key={value} label={value} selected={filters.home.includes(value)} onPress={() => toggle('home', value)} />)}</View></>}
         </ScrollView>
@@ -187,10 +190,11 @@ function FilterSheet({ category, filters, setFilters, onDone }) {
   </Modal>;
 }
 
-function Discovery({ mode, onModeChange, decisions, setDecision, onOpen, onAccount }) {
+function Discovery({ mode, profiles, decisions, setDecision, onOpen, onAccount }) {
   const [index, setIndex] = useState(0);
   const [activeFilter, setActiveFilter] = useState(null);
   const [filters, setFilters] = useState({ ...DEFAULT_FILTERS });
+  const [draftFilters, setDraftFilters] = useState({ ...DEFAULT_FILTERS });
   const expectedRole = mode === 'owner' ? 'bonus' : 'owner';
   const visible = profiles.filter(p => p.role === expectedRole && p.distance <= filters.radius && filters.schedule.every(value => p.filterData.schedule.includes(value)) && filters.experience.every(value => p.filterData.experience.includes(value)) && filters.home.every(value => p.filterData.home.includes(value)));
   const p = visible[index % Math.max(visible.length, 1)];
@@ -208,11 +212,10 @@ function Discovery({ mode, onModeChange, decisions, setDecision, onOpen, onAccou
     <TopBar onAccount={onAccount} />
     <ScrollView contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}>
       <View style={styles.discoverIntro}><View><Text style={styles.eyebrow}>DISCOVER</Text><Text style={styles.h1}>Find their people.</Text></View></View>
-      <Pressable accessibilityRole="button" accessibilityLabel={`Switch mode. Currently ${mode === 'owner' ? 'Pet Owner' : 'Bonus Human'} mode`} onPress={() => onModeChange(mode === 'owner' ? 'bonus' : 'owner')} style={styles.compactMode}><View style={styles.modeStatusDot} /><Text style={styles.compactModeText}>{mode === 'owner' ? 'Pet Owner mode · viewing Bonus Humans' : 'Bonus Human mode · viewing pets & Pet Owners'}</Text><Text style={styles.modeSwitchText}>Switch</Text></Pressable>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterCategoryRow}>{categoryChips.map(([id, label, selected]) => <Pressable key={id} accessibilityRole="button" accessibilityLabel={`${label} filter`} accessibilityState={{ selected }} onPress={() => setActiveFilter(id)} style={[styles.filterCategoryChip, selected && styles.filterCategoryChipActive]}><Text style={[styles.filterCategoryText, selected && styles.filterCategoryTextActive]}>{label}</Text><Ionicons name="chevron-down" size={14} color={selected ? C.white : C.sage} /></Pressable>)}</ScrollView>
-      {activeFilter && <FilterSheet category={activeFilter} filters={filters} setFilters={setFilters} onDone={() => { setActiveFilter(null); setIndex(0); }} />}
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterCategoryRow}>{categoryChips.map(([id, label, selected]) => <Pressable key={id} accessibilityRole="button" accessibilityLabel={`${label} filter`} accessibilityState={{ selected }} onPress={() => { setDraftFilters({ ...filters, schedule: [...filters.schedule], experience: [...filters.experience], home: [...filters.home] }); setActiveFilter(id); }} style={[styles.filterCategoryChip, selected && styles.filterCategoryChipActive]}><Text style={[styles.filterCategoryText, selected && styles.filterCategoryTextActive]}>{label}</Text><Ionicons name="chevron-down" size={14} color={selected ? C.white : C.sage} /></Pressable>)}</ScrollView>
+      {activeFilter && <FilterSheet category={activeFilter} filters={draftFilters} setFilters={setDraftFilters} onDone={() => { setFilters(draftFilters); setActiveFilter(null); setIndex(0); }} onCancel={() => setActiveFilter(null)} />}
       {!p ? <View style={styles.emptyState}><Text style={styles.h3}>No profiles fit these filters</Text><Text style={styles.body}>Try expanding beyond the current {filters.radius}-mile radius or start again with all filters cleared.</Text><View style={styles.emptyActions}><Button small label="Increase distance" disabled={filters.radius === 100} onPress={increaseDistance} /><Button small tone="light" label="Clear filters" onPress={clearFilters} /></View></View> : <>
-        <View style={styles.discoveryCard}><PhotoGallery photos={p.photos} style={styles.discoveryImage} /><View style={styles.typeBadge}><Text style={styles.typeBadgeText}>{p.type}</Text></View>{decisions[p.id] && <View style={styles.decisionBadge}><Text style={styles.decisionBadgeText}>{decisions[p.id] === 'interested' ? 'INTERESTED' : 'PASSED — OPEN TO RECONSIDER'}</Text></View>}<View style={styles.cardBody}><Text style={styles.cardName}>{p.name}</Text><Text style={styles.location}>⌖  {p.location}</Text><Text style={styles.cardIntro}>{p.intro}</Text><View style={styles.pillRow}>{p.highlights.map(x => <Pill key={x}>{x}</Pill>)}</View><View style={styles.lookingBox}><Text style={styles.lookingLabel}>LOOKING FOR</Text><Text style={styles.lookingText}>{p.looking}</Text></View><Button label="View profile" tone="ghost" onPress={() => onOpen(p)} /></View></View>
+        <View style={styles.discoveryCard}><PhotoGallery photos={p.photos} style={styles.discoveryImage} />{decisions[p.id] && <View style={styles.decisionBadge}><Text style={styles.decisionBadgeText}>{decisions[p.id] === 'interested' ? 'INTERESTED' : 'PASSED — OPEN TO RECONSIDER'}</Text></View>}<View style={styles.cardBody}><Text style={styles.cardName}>{p.name}</Text><Text style={styles.location}>⌖  {p.location}</Text><Text style={styles.cardIntro}>{p.intro}</Text><View style={styles.pillRow}>{p.highlights.map(x => <Pill key={x}>{x}</Pill>)}</View><View style={styles.lookingBox}><Text style={styles.lookingLabel}>LOOKING FOR</Text><Text style={styles.lookingText}>{p.looking}</Text></View><Button label="View profile" tone="ghost" onPress={() => onOpen(p, visible, index % visible.length)} /></View></View>
         <View style={styles.browseControls}><Button small tone="light" label="← Previous" onPress={() => move(-1)} /><Text style={styles.centerHint}>{index + 1} of {visible.length}</Text><Button small tone="light" label="Next →" onPress={() => move(1)} /></View>
         <View style={styles.actionRow}><Button label={decisions[p.id] === 'passed' ? 'Reconsider pass' : 'Pass'} tone="light" onPress={() => changeDecision('passed')} /><Button label={decisions[p.id] === 'interested' ? 'Undo interested' : 'Interested'} onPress={() => changeDecision('interested')} /></View>
       </>}
@@ -220,11 +223,10 @@ function Discovery({ mode, onModeChange, decisions, setDecision, onOpen, onAccou
   </View>;
 }
 
-function PersonProfile({ profile, onBack, decision, setDecision }) {
+function PersonProfile({ profile, profiles, profileIndex, onNavigate, onBack, decision, setDecision }) {
   return <View style={styles.flex}><TopBar title="Profile" back onBack={onBack} />
     <ScrollView contentContainerStyle={styles.screenFlush} showsVerticalScrollIndicator={false}>
       <PhotoGallery photos={profile.photos} style={styles.profileHero} />
-      <View style={styles.profileOverlayBadge}><Text style={styles.typeBadgeText}>{profile.type}</Text></View>
       <View style={styles.profileContent}>
         <Text style={styles.h1}>{profile.name}</Text><Text style={styles.location}>⌖  {profile.location}</Text>
         <Text style={styles.profileBio}>{profile.intro}</Text>
@@ -236,66 +238,37 @@ function PersonProfile({ profile, onBack, decision, setDecision }) {
         {profile.prompts.map(([q, a]) => <View key={q} style={styles.promptRow}><Text style={styles.promptQ}>{q}</Text><Text style={styles.promptA}>“{a}”</Text></View>)}
         <View style={styles.actionRow}><Button tone="light" label={decision === 'passed' ? 'Reconsider pass' : 'Pass'} onPress={() => setDecision(profile.id, decision === 'passed' ? null : 'passed')} /><Button label={decision === 'interested' ? 'Undo interested' : 'Interested'} onPress={() => setDecision(profile.id, decision === 'interested' ? null : 'interested')} /></View>
         <Text style={styles.safetyNote}>Nothing is permanent. You can revisit and change your choice from Connections.</Text>
+        <View style={styles.browseControls}><Button small tone="light" label="← Previous" onPress={() => onNavigate(-1)} /><Text style={styles.centerHint}>{profileIndex + 1} of {profiles.length}</Text><Button small tone="light" label="Next →" onPress={() => onNavigate(1)} /></View>
       </View>
     </ScrollView>
   </View>;
 }
 
-function ZukiDetail({ onBack, onGoFeed, onAccount }) {
-  const [mode, setMode] = useState('pet');
-  const [view, setView] = useState('detail');
-  const [stage, setStage] = useState(2);
-  const [requested, setRequested] = useState(false);
-  const [confirmed, setConfirmed] = useState(false);
-  if (view === 'care') return <Care onBack={() => setView('detail')} onAccount={onAccount} />;
+function ZukiDetail({ onBack, onAccount }) {
+  const [tab, setTab] = useState('profile');
   return <View style={styles.flex}><TopBar title="Zuki" back onBack={onBack} onAccount={onAccount} />
     <ScrollView contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}>
-      <View style={styles.segment}><Pressable onPress={() => setMode('pet')} style={[styles.segmentItem, mode === 'pet' && styles.segmentActive]}><Text style={[styles.segmentText, mode === 'pet' && styles.segmentTextActive]}>Pet profile</Text></Pressable><Pressable onPress={() => setMode('relationship')} style={[styles.segmentItem, mode === 'relationship' && styles.segmentActive]}><Text style={[styles.segmentText, mode === 'relationship' && styles.segmentTextActive]}>Relationship</Text></Pressable></View>
-      {mode === 'pet' ? <>
+      <View style={styles.segment}>{[['profile', 'Profile'], ['care', 'Care Guide']].map(([id, label]) => <Pressable accessibilityRole="button" key={id} onPress={() => setTab(id)} style={[styles.segmentItem, tab === id && styles.segmentActive]}><Text style={[styles.segmentText, tab === id && styles.segmentTextActive]}>{label}</Text></Pressable>)}</View>
+      {tab === 'profile' ? <>
         <PhotoGallery photos={[zukiImage, zukiWalkImage]} style={styles.petHero} />
-        <View style={styles.petNameRow}><View><Text style={styles.h1}>Zuki</Text><Text style={styles.location}>16 years old · Chihuahua mix · 9 lbs</Text></View><View style={styles.trustedBadge}><Text style={styles.trustedBadgeText}>Pet Circle · 3</Text></View></View>
+        <View style={styles.petNameRow}><View><Text style={styles.h1}>Zuki</Text><Text style={styles.location}>16 years old · Chihuahua mix · 9 lbs</Text></View></View>
         <Text style={styles.profileBio}>A gentle senior with discerning taste in blankets. Zuki is happiest near her people, enjoys a slow sniff around the block, and prefers calm introductions.</Text>
         <View style={styles.pillRow}><Pill>Quiet companion</Pill><Pill>Senior savvy</Pill><Pill>No stairs</Pill></View>
         <SectionTitle eyebrow="AT A GLANCE" title="What Zuki needs" />
-        <View style={styles.grid}>
-          {[['◷', 'Routine', 'Meals at 8 AM & 5:30 PM'], ['♡', 'Comfort', 'Approach from the front'], ['✚', 'Health', 'Two daily medications'], ['⌂', 'Limits', 'Short walks, no stairs']].map(([icon, title, txt]) => <View key={title} style={styles.miniCard}><Text style={styles.miniIcon}>{icon}</Text><Text style={styles.miniTitle}>{title}</Text><Text style={styles.miniText}>{txt}</Text></View>)}
-        </View>
-        <Button label="Open full care guide" onPress={() => setView('care')} />
-        <View style={styles.infoNote}><Text style={styles.infoNoteTitle}>Emergency note</Text><Text style={styles.body}>If Zuki collapses, struggles to breathe, or cannot stand, call Mike and Rose City Emergency Vet immediately.</Text></View>
-      </> : <>
-        <SectionTitle eyebrow="PET CIRCLE" title="Zuki’s Pet Circle" />
-        <View style={styles.peopleStrip}>
-          <View style={styles.personCircle}><Image source={mikeImage} style={styles.personCircleImage} /><Text style={styles.personName}>Mike</Text><Text style={styles.personRole}>Pet Owner</Text></View>
-          <View style={styles.relationshipLine} />
-          <View style={styles.petCircle}><Image source={zukiImage} style={styles.personCircleImage} /><Text style={styles.personName}>Zuki</Text><Text style={styles.personRole}>The center</Text></View>
-          <View style={styles.relationshipLine} />
-          <View style={styles.personCircle}><Image source={peopleImage} style={styles.personCircleImage} /><Text style={styles.personName}>Haley & Ari</Text><Text style={styles.personRole}>Bonus humans</Text></View>
-        </View>
-        <View style={styles.relationshipStatus}><Text style={styles.lookingLabel}>RELATIONSHIP STAGE</Text><Text style={styles.h3}>{['Meet & Greet', 'Trial Visits', 'Regular Bonus Human'][stage]}</Text>
-          <View style={styles.timeline}>{['Meet & Greet', 'Trial Visits', 'Regular Bonus Human'].map((s, i) => <View key={s} style={styles.timelineStep}><View style={[styles.timelineDot, i <= stage && styles.timelineDotActive]}><Text style={styles.timelineCheck}>{i < stage ? '✓' : ''}</Text></View><Text style={[styles.timelineLabel, i <= stage && { color: C.ink }]}>{s}</Text>{i < 2 && <View style={[styles.timelineBar, i < stage && styles.timelineBarActive]} />}</View>)}</View>
-          {stage < 2 && <Button label="Mark next step complete" small onPress={() => setStage(stage + 1)} />}
-        </View>
-        <SectionTitle eyebrow="AVAILABILITY" title="Plan a visit" />
-        <View style={styles.availabilityCard}><View style={styles.dateBox}><Text style={styles.dateDay}>THU</Text><Text style={styles.dateNum}>20</Text></View><View style={styles.availText}><Text style={styles.h3}>7:00–11:00 PM</Text><Text style={styles.body}>Mike marked Zuki as available</Text></View></View>
-        {!requested ? <Button label="Request this visit" onPress={() => setRequested(true)} /> : !confirmed ? <View style={styles.requestCard}><Text style={styles.requestTitle}>Visit proposed to Mike</Text><Text style={styles.body}>For the prototype, switch to the Pet Owner role and confirm the visit.</Text><Button label="Confirm visit as Mike" small onPress={() => setConfirmed(true)} /></View> : <View style={styles.confirmed}><Text style={styles.confirmedIcon}>✓</Text><View><Text style={styles.requestTitle}>Visit confirmed</Text><Text style={styles.body}>Thursday, 7:00–11:00 PM · Haley & Ari</Text></View></View>}
-        <View style={styles.quickGrid}><Button label="View pet profile" tone="ghost" onPress={() => setMode('pet')} /><Button label="View care info" tone="ghost" onPress={() => setView('care')} /></View>
-        <View style={styles.quickGrid}><Button label="Share update" tone="ghost" onPress={onGoFeed} /></View>
-      </>}
+        <View style={styles.grid}>{[['◷', 'Routine', 'Meals at 8 AM & 5:30 PM'], ['♡', 'Comfort', 'Approach from the front'], ['✚', 'Health', 'Two daily medications'], ['⌂', 'Limits', 'Short walks, no stairs']].map(([icon, title, txt]) => <View key={title} style={styles.miniCard}><Text style={styles.miniIcon}>{icon}</Text><Text style={styles.miniTitle}>{title}</Text><Text style={styles.miniText}>{txt}</Text></View>)}</View>
+        <Button label="Open Care Guide" onPress={() => setTab('care')} />
+      </> : <CareGuideContent />}
     </ScrollView>
   </View>;
 }
 
-function PetsHub({ onGoFeed, onAccount }) {
+function PetsHub({ mode, onAccount }) {
   const [selected, setSelected] = useState(null);
-  if (selected === 'zuki') return <ZukiDetail onBack={() => setSelected(null)} onGoFeed={onGoFeed} onAccount={onAccount} />;
-  if (selected === 'mochi') return <View style={styles.flex}><TopBar title="Mochi" back onBack={() => setSelected(null)} onAccount={onAccount} /><ScrollView contentContainerStyle={styles.screen}><Image source={zukiWalkImage} style={styles.petHero} /><SectionTitle eyebrow="BONUS PET · EARLY CONNECTION" title="Mochi" /><Text style={styles.profileBio}>Mochi’s full pet and care profile will become available as this connection moves toward trial visits.</Text><Button small tone="light" label="Back to pets" onPress={() => setSelected(null)} /></ScrollView></View>;
+  if (selected === 'zuki') return <ZukiDetail onBack={() => setSelected(null)} onAccount={onAccount} />;
   return <View style={styles.flex}><TopBar title="Pets" onAccount={onAccount} /><ScrollView contentContainerStyle={styles.screen}>
-    <SectionTitle eyebrow="YOUR PET CIRCLE" title="People, pets, and Care" />
-    <Text style={styles.lede}>Each pet keeps their profile, Pet Circle, Care details, and Relationships together.</Text>
-    <Text style={styles.listLabel}>PETS YOU OWN</Text>
-    <Pressable onPress={() => setSelected('zuki')} style={styles.petListCard}><Image source={zukiImage} style={styles.petListImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Zuki</Text><Text style={styles.body}>1 active Relationship · 3 people in Pet Circle</Text><Text style={styles.cardLink}>Open pet profile →</Text></View></Pressable>
-    <Text style={styles.listLabel}>PETS YOU’RE A BONUS HUMAN FOR</Text>
-    <Pressable onPress={() => setSelected('mochi')} style={styles.petListCard}><Image source={zukiWalkImage} style={styles.petListImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Mochi</Text><Text style={styles.body}>Connection with Priya</Text><Text style={styles.cardLink}>View Connection →</Text></View></Pressable>
+    <SectionTitle eyebrow={mode === 'owner' ? 'PETS YOU OWN' : 'PETS IN YOUR CONNECTIONS'} title={mode === 'owner' ? 'Your pets' : 'Connected pets'} />
+    <Text style={styles.lede}>{mode === 'owner' ? 'Quick access to Zuki’s profile and practical Care Guide.' : 'Quick pet and Care access for your active Connections.'}</Text>
+    <Pressable onPress={() => setSelected('zuki')} style={styles.petListCard}><Image source={zukiImage} style={styles.petListImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Zuki</Text><Text style={styles.body}>{mode === 'owner' ? 'Your 16-year-old Chihuahua mix' : 'Connected through Mike'}</Text><Text style={styles.cardLink}>Open Profile or Care Guide →</Text></View></Pressable>
   </ScrollView></View>;
 }
 
@@ -322,39 +295,84 @@ function Feed({ onAccount }) {
   </View>;
 }
 
-function Care({ onBack, onAccount }) {
+function CareGuideContent() {
   const [done, setDone] = useState({ breakfast: true, walk: false, dinner: false });
-  return <View style={styles.flex}><TopBar title="Zuki · Care" back onBack={onBack} onAccount={onAccount} />
-    <ScrollView contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}>
-      <View style={styles.breadcrumb}><Text style={styles.breadcrumbText}>Relationship  ›  Zuki  ›  Care information</Text></View>
+  return <>
       <View style={styles.careHero}><Image source={zukiImage} style={styles.careAvatar} /><View style={styles.availText}><Text style={styles.eyebrow}>ZUKI · UPDATED 2 DAYS AGO</Text><Text style={styles.h2}>Everything you need, quickly.</Text></View></View>
       <View style={styles.todayCard}><View style={styles.todayHeader}><View><Text style={[styles.eyebrow, { color: C.gold }]}>TODAY · THURSDAY</Text><Text style={[styles.h3, { color: C.white }]}>Care checklist</Text></View><Text style={styles.progress}>{Object.values(done).filter(Boolean).length}/3</Text></View>
         {[['breakfast', '8:00 AM', 'Breakfast + heart medicine'], ['walk', '12:30 PM', 'Short sniff walk'], ['dinner', '5:30 PM', 'Dinner + joint chew']].map(([id, time, label]) => <Pressable key={id} onPress={() => setDone({ ...done, [id]: !done[id] })} style={styles.checkRow}><View style={[styles.checkbox, done[id] && styles.checkboxDone]}><Text style={styles.checkmark}>{done[id] ? '✓' : ''}</Text></View><Text style={styles.checkTime}>{time}</Text><Text style={[styles.checkLabel, done[id] && styles.strike]}>{label}</Text></Pressable>)}
       </View>
       {careSections.map(([title, body], i) => <View key={title} style={[styles.careSection, (i === 5 || i === 6) && styles.careEmergency]}><View style={[styles.careIcon, (i === 5 || i === 6) && { backgroundColor: C.clayLight }]}><Text style={styles.careIconText}>{['◷', '⌂', '✚', '↗', '♡', '!', '+'][i]}</Text></View><View style={styles.careCopy}><Text style={styles.factTitle}>{title}</Text><Text style={styles.careBody}>{body}</Text></View></View>)}
       <Text style={styles.safetyNote}>This guide is shared by Mike. When something feels wrong, contact him rather than guessing.</Text>
-    </ScrollView>
-  </View>;
+    </>;
 }
 
-function DecisionList({ status, decisions, setDecision, onOpen }) {
+function Care({ onBack, onAccount }) {
+  return <View style={styles.flex}><TopBar title="Zuki · Care Guide" back onBack={onBack} onAccount={onAccount} /><ScrollView contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}><CareGuideContent /></ScrollView></View>;
+}
+
+function DecisionList({ status, decisions, setDecision, onOpen, profiles }) {
   const saved = profiles.filter(profile => decisions[profile.id] === status);
   if (!saved.length) return <View style={styles.emptyState}><Text style={styles.h3}>No {status} profiles yet</Text><Text style={styles.body}>{status === 'interested' ? 'Profiles you mark Interested will stay here for easy review.' : 'Profiles you pass on will stay here until you reconsider them.'}</Text></View>;
   return <View>{saved.map(profile => <View key={profile.id} style={styles.decisionListCard}><Pressable onPress={() => onOpen(profile)} style={styles.decisionProfileLink}><Image source={profile.image} style={styles.decisionImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>{profile.name}</Text><Text style={styles.location}>{profile.location}</Text><Text style={styles.cardLink}>View profile →</Text></View></Pressable><Button small tone="light" label={status === 'interested' ? 'Undo interested' : 'Reconsider pass'} onPress={() => setDecision(profile.id, null)} /></View>)}</View>;
 }
 
-function Connections({ onAccount, decisions, setDecision, onOpen }) {
+const CONNECTION_STAGES = ['Meet & Greet', 'Trial Visits', 'Regular Bonus Human'];
+
+function ScheduleSheet({ kind, onCancel, onRequest }) {
+  const [date, setDate] = useState('Thursday, August 20');
+  const [start, setStart] = useState('7:00 PM');
+  const [end, setEnd] = useState('8:00 PM');
+  const title = kind === 'Meet & Greet' ? 'Schedule Meet & Greet' : kind === 'Trial Visit' ? 'Schedule trial visit' : 'Request one-off visit';
+  return <Modal visible transparent animationType="slide" onRequestClose={onCancel}><View style={styles.sheetLayer}><Pressable accessibilityLabel="Dismiss scheduling" onPress={onCancel} style={styles.sheetScrim} /><View style={styles.filterSheet}><View style={styles.sheetHandle} /><View style={styles.sheetHeader}><View><Text style={styles.eyebrow}>SCHEDULING</Text><Text style={styles.h2}>{title}</Text></View><Pressable accessibilityLabel="Cancel scheduling" onPress={onCancel} style={styles.sheetClose}><Ionicons name="close" size={22} color={C.ink} /></Pressable></View><View style={styles.sheetContent}><Text style={styles.fieldLabel}>Date</Text><TextInput accessibilityLabel="Visit date" value={date} onChangeText={setDate} style={styles.field} /><View style={styles.timeFields}><View style={styles.timeField}><Text style={styles.fieldLabel}>Start time</Text><TextInput accessibilityLabel="Start time" value={start} onChangeText={setStart} style={styles.field} /></View><View style={styles.timeField}><Text style={styles.fieldLabel}>End time</Text><TextInput accessibilityLabel="End time" value={end} onChangeText={setEnd} style={styles.field} /></View></View><Text style={styles.filterHelp}>This mocked request stays on this device and can be confirmed, declined, or rescheduled.</Text></View><View style={styles.sheetActions}><Button tone="light" label="Cancel" onPress={onCancel} /><Button label="Send request" onPress={() => onRequest({ kind, date, start, end, status: 'requested' })} /></View></View></View></Modal>;
+}
+
+function ConnectionTimeline({ stage }) {
+  return <View style={styles.timeline}>{CONNECTION_STAGES.map((label, index) => <View key={label} style={styles.timelineStep}><View style={[styles.timelineDot, index <= stage && styles.timelineDotActive]}><Text style={styles.timelineCheck}>{index < stage ? '✓' : ''}</Text></View><Text style={[styles.timelineLabel, index <= stage && { color: C.ink }]}>{label}</Text>{index < 2 && <View style={[styles.timelineBar, index < stage && styles.timelineBarActive]} />}</View>)}</View>;
+}
+
+function ConnectionDetail({ connection, setConnection, messages, setMessages, onBack, onAccount, onOpenPerson, onOpenPet }) {
+  const overviewScroll = useRef(null);
+  const [tab, setTab] = useState('overview');
+  const [draft, setDraft] = useState('');
+  const [scheduleKind, setScheduleKind] = useState(null);
+  const [showEnd, setShowEnd] = useState(false);
+  const [endReason, setEndReason] = useState('');
+  const [reportStarted, setReportStarted] = useState(false);
+  const addActivity = text => setMessages(current => [...current, { id: Date.now() + Math.random(), who: 'Activity', text, system: true }]);
+  const updateStage = next => { setConnection(current => ({ ...current, stage: next })); addActivity(`Connection stage changed to ${CONNECTION_STAGES[next]}.`); overviewScroll.current?.scrollTo?.({ y: 0, animated: false }); };
+  const requestEvent = event => { const rescheduled = Boolean(connection.event); setConnection(current => ({ ...current, event })); addActivity(`Haley & Ari ${rescheduled ? 'rescheduled' : 'requested'} a ${event.kind}: ${event.date}, ${event.start}–${event.end}.`); setScheduleKind(null); };
+  const respond = status => { setConnection(current => ({ ...current, event: { ...current.event, status } })); addActivity(`Mike ${status === 'confirmed' ? 'confirmed' : 'declined'} the ${connection.event.kind}.`); };
+  const send = () => { if (!draft.trim()) return; setMessages(current => [...current, { id: Date.now(), who: 'Mike', text: draft.trim() }]); setDraft(''); };
+  const primaryKind = connection.stage === 0 ? 'Meet & Greet' : connection.stage === 1 ? 'Trial Visit' : 'Visit';
+  if (!connection.active) return <View style={styles.flex}><TopBar title="Connection ended" back onBack={onBack} onAccount={onAccount} /><View style={styles.screen}><View style={styles.emptyState}><Text style={styles.h3}>This Connection has ended</Text><Text style={styles.body}>Its shared history remains available in this local prototype.</Text></View></View></View>;
+  return <View style={styles.flex}><TopBar title="Haley & Ari" back onBack={onBack} onAccount={onAccount} />
+    <View style={styles.connectionSummary}><Image source={zukiImage} style={styles.connectionImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Mike + Haley & Ari</Text><Text style={styles.body}>with Zuki · {CONNECTION_STAGES[connection.stage]}</Text></View></View>
+    <View style={[styles.segment, styles.detailSegment]}>{[['overview', 'Overview'], ['chat', 'Chat']].map(([id, label]) => <Pressable accessibilityRole="button" accessibilityLabel={`${label} Connection tab`} key={id} onPress={() => setTab(id)} style={[styles.segmentItem, tab === id && styles.segmentActive]}><Text style={[styles.segmentText, tab === id && styles.segmentTextActive]}>{label}</Text></Pressable>)}</View>
+    {tab === 'overview' ? <ScrollView ref={overviewScroll} contentContainerStyle={styles.screen} showsVerticalScrollIndicator={false}>
+      <SectionTitle eyebrow="CONNECTION" title="Mike, Haley & Ari, and Zuki" />
+      <View style={styles.peopleStrip}><Pressable accessibilityRole="button" accessibilityLabel="Open Mike profile" onPress={() => onOpenPerson('mike')} style={styles.personCircle}><Image source={mikeImage} style={styles.personCircleImage} /><Text style={styles.personName}>Mike</Text><Text style={styles.personRole}>Pet Owner</Text></Pressable><View style={styles.relationshipLine} /><Pressable accessibilityRole="button" accessibilityLabel="Open Zuki profile" onPress={onOpenPet} style={styles.petCircle}><Image source={zukiImage} style={styles.personCircleImage} /><Text style={styles.personName}>Zuki</Text><Text style={styles.personRole}>Pet</Text></Pressable><View style={styles.relationshipLine} /><Pressable accessibilityRole="button" accessibilityLabel="Open Haley and Ari profile" onPress={() => onOpenPerson('haley')} style={styles.personCircle}><Image source={peopleImage} style={styles.personCircleImage} /><Text style={styles.personName}>Haley & Ari</Text><Text style={styles.personRole}>Bonus Humans</Text></Pressable></View>
+      <View style={styles.relationshipStatus}><Text style={styles.lookingLabel}>CONNECTION STAGE</Text><Text style={styles.h3}>{CONNECTION_STAGES[connection.stage]}</Text><ConnectionTimeline stage={connection.stage} /></View>
+      <SectionTitle eyebrow="NEXT STEP" title={connection.stage === 0 ? 'Plan the first Meet & Greet' : connection.stage === 1 ? 'Try time together with Zuki' : 'Keep the rhythm working'} />
+      {connection.stage < 2 ? <Button label={`Schedule ${primaryKind}`} onPress={() => setScheduleKind(primaryKind)} /> : <View style={styles.regularActions}><Button label="Request a one-off visit" onPress={() => setScheduleKind('Visit')} /><Button tone="light" label="Manage recurring schedule" onPress={() => setConnection(current => ({ ...current, recurring: current.recurring || { day: 'Thursday', start: '7:00 PM', end: '9:00 PM', editing: true } }))} /></View>}
+      {connection.recurring && <View style={styles.requestCard}><Text style={styles.requestTitle}>Recurring schedule</Text>{connection.recurring.editing ? <><Text style={styles.fieldLabel}>Day</Text><TextInput accessibilityLabel="Recurring day" value={connection.recurring.day} onChangeText={day => setConnection(current => ({ ...current, recurring: { ...current.recurring, day } }))} style={styles.field} /><View style={styles.timeFields}><View style={styles.timeField}><Text style={styles.fieldLabel}>Start</Text><TextInput accessibilityLabel="Recurring start time" value={connection.recurring.start} onChangeText={start => setConnection(current => ({ ...current, recurring: { ...current.recurring, start } }))} style={styles.field} /></View><View style={styles.timeField}><Text style={styles.fieldLabel}>End</Text><TextInput accessibilityLabel="Recurring end time" value={connection.recurring.end} onChangeText={end => setConnection(current => ({ ...current, recurring: { ...current.recurring, end } }))} style={styles.field} /></View></View><Button small label="Save recurring schedule" onPress={() => { setConnection(current => ({ ...current, recurring: { ...current.recurring, editing: false } })); addActivity('The recurring schedule was updated.'); }} /></> : <><Text style={styles.body}>Every {connection.recurring.day} · {connection.recurring.start}–{connection.recurring.end}</Text><Button small tone="light" label="Edit recurring schedule" onPress={() => setConnection(current => ({ ...current, recurring: { ...current.recurring, editing: true } }))} /></>}</View>}
+      {connection.event && <View style={connection.event.status === 'confirmed' ? styles.confirmed : styles.requestCard}><Text style={connection.event.status === 'confirmed' ? styles.confirmedIcon : styles.requestTitle}>{connection.event.status === 'confirmed' ? '✓' : connection.event.status.toUpperCase()}</Text><View style={styles.eventCopy}><Text style={styles.requestTitle}>{connection.event.kind}</Text>{connection.event.status === 'confirmed' && <StatusLabel tone="success">Confirmed</StatusLabel>}<Text style={styles.body}>{connection.event.date} · {connection.event.start}–{connection.event.end}</Text>{connection.event.status === 'requested' && <View style={styles.inlineActions}><Button small label="Confirm as Mike" onPress={() => respond('confirmed')} /><Button small tone="light" label="Decline" onPress={() => respond('declined')} /><Button small tone="ghost" label="Reschedule" onPress={() => setScheduleKind(connection.event.kind)} /></View>}</View></View>}
+      <View style={styles.stageActions}>{connection.stage > 0 && <Button small tone="light" label={`Back to ${CONNECTION_STAGES[connection.stage - 1]}`} onPress={() => updateStage(connection.stage - 1)} />}{connection.stage < 2 && <Button small tone="ghost" label={connection.stage === 0 ? 'Skip to Trial Visits' : 'Move to Regular Bonus Human'} onPress={() => updateStage(connection.stage + 1)} />}</View>
+      <SectionTitle eyebrow="QUICK LINKS" title="Profiles and Care" /><View style={styles.quickGrid}><Button tone="ghost" label="View Zuki" onPress={onOpenPet} /><Button tone="ghost" label="Chat" onPress={() => setTab('chat')} /></View>
+      <Pressable accessibilityRole="button" onPress={() => setShowEnd(true)} style={styles.endConnection}><Text style={styles.endConnectionText}>End Connection</Text></Pressable>
+    </ScrollView> : <><ScrollView contentContainerStyle={styles.chat} keyboardShouldPersistTaps="handled">{messages.map(m => <View key={m.id} style={m.system ? styles.activityBubble : [styles.bubble, m.who === 'Mike' ? styles.bubbleMine : styles.bubbleTheirs]}>{m.system ? <Text style={styles.activityText}>{m.text}</Text> : <><Text style={styles.bubbleWho}>{m.who}</Text><Text style={styles.bubbleText}>{m.text}</Text></>}</View>)}</ScrollView><View style={styles.chatComposer}><TextInput value={draft} onChangeText={setDraft} placeholder="Message Haley & Ari…" placeholderTextColor="#929B94" style={styles.input} /><Button small label="Send" onPress={send} /></View></>}
+    {scheduleKind && <ScheduleSheet kind={scheduleKind} onCancel={() => setScheduleKind(null)} onRequest={requestEvent} />}
+    {showEnd && <Modal visible transparent animationType="fade" onRequestClose={() => setShowEnd(false)}><View style={styles.dialogLayer}><View style={styles.dialog}><Text style={styles.eyebrow}>{reportStarted ? 'SERIOUS PROBLEM' : 'END CONNECTION'}</Text><Text style={styles.h2}>{reportStarted ? 'Tell us what happened' : 'Are you sure?'}</Text><Text style={styles.body}>{reportStarted ? 'This prototype does not send a report. In production, this would open a private safety form and support options.' : 'This ends the Connection for Mike, Haley & Ari, and Zuki. Feedback is optional.'}</Text>{!reportStarted && <><View style={styles.filterChips}>{["It wasn't a good fit", "Availability didn't work", "Communication wasn't working", "Care instructions weren't followed", 'Other'].map(reason => <FilterChip key={reason} label={reason} selected={endReason === reason} onPress={() => setEndReason(reason)} />)}</View><Pressable accessibilityRole="button" onPress={() => setReportStarted(true)} style={styles.reportLink}><Text style={styles.endConnectionText}>Report a serious problem</Text></Pressable></>}<View style={styles.actionRow}>{reportStarted ? <Button tone="light" label="Back" onPress={() => setReportStarted(false)} /> : <><Button tone="light" label="Keep Connection" onPress={() => setShowEnd(false)} /><Button tone="danger" label="End Connection" onPress={() => { setConnection(current => ({ ...current, active: false, endReason })); addActivity('Mike ended the Connection.'); setShowEnd(false); }} /></>}</View></View></View></Modal>}
+  </View>;
+}
+
+function Connections({ onAccount, decisions, setDecision, onOpen, profiles, connection, setConnection, messages, setMessages, onOpenPet }) {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState('connected');
-  const [draft, setDraft] = useState('');
-  const [messages, setMessages] = useState([{ id: 1, who: 'Haley & Ari', text: 'We would love to meet you and Zuki somewhere quiet.' }, { id: 2, who: 'Mike', text: 'That sounds great. She does best with slow introductions.' }]);
-  const send = () => { if (!draft.trim()) return; setMessages([...messages, { id: Date.now(), who: 'Mike', text: draft.trim() }]); setDraft(''); };
-  if (open) return <View style={styles.flex}><TopBar title="Haley & Ari" back onBack={() => setOpen(false)} onAccount={onAccount} /><View style={styles.connectionSummary}><Image source={zukiImage} style={styles.connectionImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Connected with Mike + Zuki</Text><Text style={styles.body}>Planning a Meet & Greet</Text></View></View><ScrollView contentContainerStyle={styles.chat} keyboardShouldPersistTaps="handled">{messages.map(m => <View key={m.id} style={[styles.bubble, m.who === 'Mike' ? styles.bubbleMine : styles.bubbleTheirs]}><Text style={styles.bubbleWho}>{m.who}</Text><Text style={styles.bubbleText}>{m.text}</Text></View>)}</ScrollView><View style={styles.chatComposer}><TextInput value={draft} onChangeText={setDraft} placeholder="Message Haley & Ari…" placeholderTextColor="#929B94" style={styles.input} /><Button small label="Send" onPress={send} /></View></View>;
-  const interestedCount = Object.values(decisions).filter(value => value === 'interested').length;
-  const passedCount = Object.values(decisions).filter(value => value === 'passed').length;
+  if (open) return <ConnectionDetail connection={connection} setConnection={setConnection} messages={messages} setMessages={setMessages} onBack={() => setOpen(false)} onAccount={onAccount} onOpenPerson={id => onOpen(profiles.find(profile => profile.id === id), profiles, profiles.findIndex(profile => profile.id === id))} onOpenPet={onOpenPet} />;
   return <View style={styles.flex}><TopBar title="Connections" onAccount={onAccount} /><ScrollView contentContainerStyle={styles.screen}>
-    <View style={styles.connectionTabs}>{[['connected', 'Connected'], ['interested', `Interested ${interestedCount}`], ['passed', `Passed ${passedCount}`]].map(([id, label]) => <Pressable accessibilityRole="button" key={id} onPress={() => setView(id)} style={[styles.connectionTab, view === id && styles.connectionTabActive]}><Text style={[styles.connectionTabText, view === id && styles.connectionTabTextActive]}>{label}</Text></Pressable>)}</View>
-    {view === 'connected' ? <><SectionTitle eyebrow="MUTUAL INTEREST" title="Get to know each other" /><Text style={styles.lede}>A Connection is a low-pressure space to message and plan a Meet & Greet before an active pet Relationship begins.</Text><Pressable onPress={() => setOpen(true)} style={styles.connectedCard}><Image source={peopleImage} style={styles.connectedImage} /><View style={styles.connectionCopy}><View style={styles.connectedTitleRow}><Text style={styles.h3}>Haley & Ari</Text><View style={styles.unreadDot}><Text style={styles.unreadText}>1</Text></View></View><Text style={styles.body}>with Mike + Zuki</Text><Text style={styles.connectedStatus}>● Planning a Meet & Greet</Text><Text style={styles.messagePreview}>“We would love to meet you and Zuki…”</Text></View><Text style={styles.chevron}>›</Text></Pressable></> : <><SectionTitle eyebrow={view === 'interested' ? 'AWAITING MUTUAL INTEREST' : 'NOT RIGHT NOW'} title={view === 'interested' ? 'Interested profiles' : 'Passed profiles'} /><DecisionList status={view} decisions={decisions} setDecision={setDecision} onOpen={onOpen} /></>}
+    <View style={styles.connectionTabs}>{[['connected', 'Connected'], ['interested', 'Interested'], ['passed', 'Passed']].map(([id, label]) => <Pressable accessibilityRole="button" key={id} onPress={() => setView(id)} style={[styles.connectionTab, view === id && styles.connectionTabActive]}><Text style={[styles.connectionTabText, view === id && styles.connectionTabTextActive]}>{label}</Text></Pressable>)}</View>
+    {view === 'connected' ? <><SectionTitle eyebrow="YOUR CONNECTIONS" title="People you’re building with" />{connection.active ? <Pressable accessibilityRole="button" accessibilityLabel="Open Haley and Ari Connection" onPress={() => setOpen(true)} style={styles.connectedCard}><Image source={peopleImage} style={styles.connectedImage} /><View style={styles.connectionCopy}><View style={styles.connectedTitleRow}><Text style={styles.h3}>Haley & Ari</Text><View style={styles.unreadDot}><Text style={styles.unreadText}>1</Text></View></View><Text style={styles.body}>with Mike + Zuki</Text><Text style={styles.connectedStatus}>● {CONNECTION_STAGES[connection.stage]}</Text><Text style={styles.messagePreview}>Planning their first Meet & Greet</Text></View><Text style={styles.chevron}>›</Text></Pressable> : <View style={styles.emptyState}><Text style={styles.h3}>No active Connections</Text><Text style={styles.body}>Discover people who could become a lasting part of life with your pet.</Text></View>}</> : <><SectionTitle eyebrow={view === 'interested' ? 'AWAITING MUTUAL INTEREST' : 'NOT RIGHT NOW'} title={view === 'interested' ? 'Interested profiles' : 'Passed profiles'} /><DecisionList status={view} decisions={decisions} setDecision={setDecision} onOpen={onOpen} profiles={profiles} /></>}
   </ScrollView></View>;
 }
 
@@ -369,7 +387,7 @@ function UIGallery({ onBack }) {
       <Text style={styles.galleryIntro}>Development reference for reviewing Bonus Human’s reusable visual patterns in one place.</Text>
 
       <SectionTitle eyebrow="FOUNDATIONS" title="Typography & headers" />
-      <View style={styles.gallerySection}><Text style={styles.h1}>Screen title</Text><Text style={styles.h2}>Section header</Text><Text style={styles.h3}>Card title</Text><Text style={styles.body}>Body text explains a feature or relationship in a calm, readable voice.</Text><Text style={styles.location}>Helper text · General location</Text><Text style={styles.eyebrow}>LABEL / EYEBROW</Text></View>
+      <View style={styles.gallerySection}><Text style={styles.h1}>Screen title</Text><Text style={styles.h2}>Section header</Text><Text style={styles.h3}>Card title</Text><Text style={styles.body}>Body text explains a feature or Connection in a calm, readable voice.</Text><Text style={styles.location}>Helper text · General location</Text><Text style={styles.eyebrow}>LABEL / EYEBROW</Text></View>
 
       <SectionTitle eyebrow="ACTIONS" title="Buttons" />
       <View style={styles.gallerySection}><Button label="Primary action" /><Button label="Secondary action" tone="light" /><Button label="Outline action" tone="ghost" /><Button label="Destructive action" tone="danger" /><Button label="Disabled action" disabled /><View style={styles.iconButtonRow}><Pressable accessibilityRole="button" accessibilityLabel="Back icon example" style={styles.galleryIconButton}><Text style={styles.galleryIcon}>‹</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Send icon example" style={[styles.galleryIconButton, styles.galleryIconButtonPrimary]}><Text style={[styles.galleryIcon, { color: C.white }]}>↑</Text></Pressable><Pressable accessibilityRole="button" accessibilityLabel="Favorite icon example" style={styles.galleryIconButton}><Text style={[styles.galleryIcon, { color: C.clay }]}>♡</Text></Pressable></View></View>
@@ -384,11 +402,11 @@ function UIGallery({ onBack }) {
       <View style={styles.gallerySection}><PhotoGallery photos={[peopleImage, peopleWalkImage]} style={styles.galleryPhoto} /></View>
 
       <SectionTitle eyebrow="CARDS" title="Profile card" />
-      <View style={styles.discoveryCard}><PhotoGallery photos={[jordanImage, jordanWalkImage]} style={styles.galleryProfileImage} /><View style={styles.typeBadge}><Text style={styles.typeBadgeText}>BONUS HUMAN</Text></View><View style={styles.cardBody}><Text style={styles.cardName}>Jordan</Text><Text style={styles.location}>⌖  Sellwood · 6.8 mi</Text><Text style={styles.cardIntro}>A former lab parent looking for one lasting local connection.</Text><View style={styles.pillRow}><Pill>Weekend mornings</Pill><Pill>Fenced yard</Pill></View><Button label="View profile" tone="ghost" /></View></View>
+      <View style={styles.discoveryCard}><PhotoGallery photos={[jordanImage, jordanWalkImage]} style={styles.galleryProfileImage} /><View style={styles.cardBody}><Text style={styles.cardName}>Jordan</Text><Text style={styles.location}>⌖  Sellwood · 6.8 mi</Text><Text style={styles.cardIntro}>A former lab parent looking for one lasting local connection.</Text><View style={styles.pillRow}><Pill>Weekend mornings</Pill><Pill>Fenced yard</Pill></View><Button label="View profile" tone="ghost" /></View></View>
 
-      <SectionTitle eyebrow="OBJECTS" title="Pet cards & Relationship stages" />
+      <SectionTitle eyebrow="OBJECTS" title="Pet cards & Connection stages" />
       <View style={styles.petListCard}><Image source={zukiImage} style={styles.petListImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Zuki</Text><Text style={styles.body}>16-year-old Chihuahua mix</Text><Text style={styles.cardLink}>Open pet profile →</Text></View></View>
-      <View style={styles.relationshipStatus}><Text style={styles.lookingLabel}>RELATIONSHIP STAGE</Text><Text style={styles.h3}>Regular Bonus Human</Text><View style={styles.timeline}>{['Meet & Greet', 'Trial Visits', 'Regular Bonus Human'].map((label, index) => <View key={label} style={styles.timelineStep}><View style={[styles.timelineDot, styles.timelineDotActive]}><Text style={styles.timelineCheck}>{index < 2 ? '✓' : ''}</Text></View><Text style={[styles.timelineLabel, { color: C.ink }]}>{label}</Text>{index < 2 && <View style={[styles.timelineBar, styles.timelineBarActive]} />}</View>)}</View></View>
+      <View style={styles.relationshipStatus}><Text style={styles.lookingLabel}>CONNECTION STAGE</Text><Text style={styles.h3}>Regular Bonus Human</Text><ConnectionTimeline stage={2} /></View>
 
       <SectionTitle eyebrow="CARDS" title="Feed & reactions" />
       <View style={styles.post}><View style={styles.postHeader}><View style={[styles.postAvatar, { backgroundColor: C.clay }]}><Text style={styles.postAvatarText}>H</Text></View><View style={styles.postMeta}><Text style={styles.postName}>Haley</Text><Text style={styles.postWhen}>Today · 8:42 PM</Text></View><Pill>Care update</Pill></View><Text style={styles.postText}>Zuki ate dinner and took her medicine. She is now deeply committed to the couch.</Text><Image source={zukiImage} style={styles.postImage} /><Pressable accessibilityRole="button" accessibilityLabel="Gallery reaction example" onPress={() => setReaction(!reaction)} style={[styles.postFooter, reaction && styles.postFooterLiked]}><Text style={[styles.postHeart, reaction && styles.postHeartLiked]}>{reaction ? '♥' : '♡'}</Text><Text style={[styles.postFooterText, reaction && { color: C.clay }]}>{reaction ? 'You love this' : '2 people love this'}</Text></Pressable></View>
@@ -405,50 +423,61 @@ function UIGallery({ onBack }) {
   </View>;
 }
 
-function Account({ mode, onModeChange, onBack, onOpenRelationship, onOpenGallery }) {
-  const [name, setName] = useState('Mike');
-  const [bio, setBio] = useState('Zuki’s Pet Owner for 16 wonderful years.');
-  const [notifications, setNotifications] = useState(true);
+function ProfileEditor({ profile, onSave, onBack }) {
+  const [draft, setDraft] = useState({ ...profile, filterData: { ...profile.filterData, schedule: [...profile.filterData.schedule], experience: [...profile.filterData.experience], home: [...profile.filterData.home] }, facts: profile.facts.map(item => [...item]) });
   const [saved, setSaved] = useState(false);
   const [photoAdded, setPhotoAdded] = useState(false);
-  return <View style={styles.flex}><TopBar title="Your account" back={!!onBack} onBack={onBack} /><ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled">
-    <View style={styles.myHeader}><Image source={mikeImage} style={styles.myImage} /><View style={styles.myCopy}><Text style={styles.h2}>Mike</Text><Text style={styles.location}>Pet Owner for Zuki</Text><Pill>Profile 85% complete</Pill></View></View>
-    <SectionTitle eyebrow="MODE" title="How are you using Bonus Human?" /><View style={styles.modeToggle}><Pressable onPress={() => onModeChange('owner')} style={[styles.modeChoice, mode === 'owner' && styles.modeChoiceActive]}><Text style={[styles.modeChoiceTitle, mode === 'owner' && styles.modeChoiceTitleActive]}>Pet Owner mode</Text><Text style={styles.modeChoiceText}>Find Bonus Humans</Text></Pressable><Pressable onPress={() => onModeChange('bonus')} style={[styles.modeChoice, mode === 'bonus' && styles.modeChoiceActive]}><Text style={[styles.modeChoiceTitle, mode === 'bonus' && styles.modeChoiceTitleActive]}>Bonus Human mode</Text><Text style={styles.modeChoiceText}>Find pets and Pet Owners</Text></Pressable></View>
-    <SectionTitle eyebrow="PROFILE" title="Edit your information" /><Text style={styles.fieldLabel}>First name</Text><TextInput accessibilityLabel="First name" value={name} onChangeText={setName} style={styles.field} /><Text style={styles.fieldLabel}>Short bio</Text><TextInput accessibilityLabel="Short bio" value={bio} onChangeText={setBio} style={[styles.field, styles.fieldMultiline]} multiline /><Button small label={saved ? 'Saved ✓' : 'Save profile'} onPress={() => setSaved(true)} />
+  const updateTags = (key, value) => setDraft(current => ({ ...current, filterData: { ...current.filterData, [key]: current.filterData[key].includes(value) ? current.filterData[key].filter(item => item !== value) : [...current.filterData[key], value] } }));
+  const updateFact = (index, value) => setDraft(current => ({ ...current, facts: current.facts.map((item, i) => i === index ? [item[0], value] : item) }));
+  return <View style={styles.flex}><TopBar title="Edit profile" back onBack={onBack} /><ScrollView contentContainerStyle={styles.screen} keyboardShouldPersistTaps="handled">
+    <SectionTitle eyebrow="BASICS" title="How you appear in Discover" /><Text style={styles.fieldLabel}>Name</Text><TextInput accessibilityLabel="Profile name" value={draft.name} onChangeText={name => setDraft({ ...draft, name })} style={styles.field} /><Text style={styles.fieldLabel}>Short bio</Text><TextInput accessibilityLabel="Profile bio" value={draft.intro} onChangeText={intro => setDraft({ ...draft, intro })} style={[styles.field, styles.fieldMultiline]} multiline /><Text style={styles.fieldLabel}>Neighborhood / location</Text><TextInput accessibilityLabel="Profile location" value={draft.location} onChangeText={location => setDraft({ ...draft, location })} style={styles.field} /><Text style={styles.fieldLabel}>Connection you hope to build</Text><TextInput accessibilityLabel="Connection hopes" value={draft.looking} onChangeText={looking => setDraft({ ...draft, looking })} style={[styles.field, styles.fieldMultiline]} multiline />
+    <SectionTitle eyebrow="AVAILABILITY" title="Broad times that could work" /><Text style={styles.filterHelp}>Use the same broad weekday and AM/PM choices people can filter in Discover.</Text>{DAYS.map(day => <View key={day} style={styles.scheduleRow}><Text style={styles.scheduleDay}>{day}</Text><View style={styles.scheduleTimes}>{['AM', 'PM'].map(period => { const value = `${day} ${period}`; return <FilterChip key={value} label={period} accessibilityLabel={`Profile ${value}`} selected={draft.filterData.schedule.includes(value)} onPress={() => updateTags('schedule', value)} />; })}</View></View>)}
+    <SectionTitle eyebrow="EXPERIENCE" title="Dog-care experience" /><View style={styles.filterChips}>{EXPERIENCE_OPTIONS.map(value => <FilterChip key={value} label={value} accessibilityLabel={`Profile experience ${value}`} selected={draft.filterData.experience.includes(value)} onPress={() => updateTags('experience', value)} />)}</View>
+    <SectionTitle eyebrow="HOME" title="Home environment" /><View style={styles.filterChips}>{HOME_OPTIONS.map(value => <FilterChip key={value} label={value} accessibilityLabel={`Profile home ${value}`} selected={draft.filterData.home.includes(value)} onPress={() => updateTags('home', value)} />)}</View>
+    <SectionTitle eyebrow="YOUR STORY" title="Detailed profile prompts" />{draft.facts.map(([title, body], index) => <View key={title}><Text style={styles.fieldLabel}>{title}</Text><TextInput accessibilityLabel={title} value={body} onChangeText={value => updateFact(index, value)} style={[styles.field, styles.fieldMultiline]} multiline /></View>)}
     <SectionTitle eyebrow="PHOTOS" title="Manage profile photos" /><View style={styles.photoManager}><Image source={mikeImage} style={styles.photoThumb} /><Image source={zukiImage} style={styles.photoThumb} />{photoAdded && <Image source={peopleWalkImage} style={styles.photoThumb} />}<Pressable onPress={() => setPhotoAdded(true)} style={styles.addPhoto}><Text style={styles.addPhotoPlus}>＋</Text><Text style={styles.addPhotoText}>Add mocked photo</Text></Pressable></View>
-    <SectionTitle eyebrow="ACCOUNT SETTINGS" title="Preferences" /><Pressable onPress={() => setNotifications(!notifications)} style={styles.preferenceRow}><View><Text style={styles.factTitle}>Notifications</Text><Text style={styles.body}>Connections, messages, and Care updates</Text></View><View style={[styles.switchTrack, notifications && styles.switchTrackOn]}><View style={[styles.switchKnob, notifications && styles.switchKnobOn]} /></View></Pressable>
-    <Pressable onPress={onOpenRelationship} style={styles.connectionCard}><Image source={zukiImage} style={styles.connectionImage} /><View style={styles.connectionCopy}><Text style={styles.h3}>Zuki + Haley & Ari</Text><Text style={styles.body}>Regular Bonus Human · 5 months</Text><Text style={styles.cardLink}>Open relationship →</Text></View></Pressable>
-    {__DEV__ && <><SectionTitle eyebrow="DEVELOPMENT" title="Visual review" /><Pressable accessibilityRole="button" onPress={onOpenGallery} style={styles.settingsRow}><Text style={styles.settingsText}>UI Gallery (Dev)</Text><Text style={styles.chevron}>›</Text></Pressable></>}
-    <View style={styles.valuesSection}><Text style={styles.lookingLabel}>THE BONUS HUMAN PROMISE</Text><Text style={styles.body}>The pet’s wellbeing comes first. Pet Owners stay responsible. Bonus Humans give time because the Relationship itself is valuable.</Text></View>
+    <Button small label={saved ? 'Saved ✓' : 'Save profile'} onPress={() => { onSave(draft); setSaved(true); }} />
   </ScrollView></View>;
+}
+
+function Account({ mode, onModeChange, onBack, profile, onSaveProfile, onManagePets }) {
+  const [screen, setScreen] = useState('hub');
+  const [notifications, setNotifications] = useState(true);
+  if (screen === 'edit') return <ProfileEditor profile={profile} onSave={onSaveProfile} onBack={() => setScreen('hub')} />;
+  if (screen === 'mode') return <View style={styles.flex}><TopBar title="Mode" back onBack={() => setScreen('hub')} /><View style={styles.screen}><SectionTitle eyebrow="MODE" title="How are you using Bonus Human?" /><View style={styles.modeToggle}><Pressable accessibilityRole="button" onPress={() => onModeChange('owner')} style={[styles.modeChoice, mode === 'owner' && styles.modeChoiceActive]}><Text style={[styles.modeChoiceTitle, mode === 'owner' && styles.modeChoiceTitleActive]}>Pet Owner</Text><Text style={styles.modeChoiceText}>Find Bonus Humans</Text></Pressable><Pressable accessibilityRole="button" onPress={() => onModeChange('bonus')} style={[styles.modeChoice, mode === 'bonus' && styles.modeChoiceActive]}><Text style={[styles.modeChoiceTitle, mode === 'bonus' && styles.modeChoiceTitleActive]}>Bonus Human</Text><Text style={styles.modeChoiceText}>Find Pet Owners and pets</Text></Pressable></View></View></View>;
+  if (screen === 'settings') return <View style={styles.flex}><TopBar title="Settings" back onBack={() => setScreen('hub')} /><View style={styles.screen}><SectionTitle eyebrow="PREFERENCES" title="Notifications" /><Pressable accessibilityRole="button" onPress={() => setNotifications(!notifications)} style={styles.preferenceRow}><View><Text style={styles.factTitle}>Notifications</Text><Text style={styles.body}>Connections, messages, and Care updates</Text></View><View style={[styles.switchTrack, notifications && styles.switchTrackOn]}><View style={[styles.switchKnob, notifications && styles.switchKnobOn]} /></View></Pressable></View></View>;
+  const rows = [['mode', 'Mode', mode === 'owner' ? 'Pet Owner' : 'Bonus Human'], ['edit', 'Edit profile', 'Photos, availability, experience, and prompts'], ...(mode === 'owner' ? [['pets', 'Manage pets', 'Zuki’s Profile and Care Guide']] : []), ['settings', 'Settings', 'Notifications'], ['help', 'Help', 'Prototype placeholder'], ['about', 'About', 'Bonus Human']];
+  return <View style={styles.flex}><TopBar title="Account" back onBack={onBack} /><ScrollView contentContainerStyle={styles.screen}><View style={styles.myHeader}><Image source={mikeImage} style={styles.myImage} /><View style={styles.myCopy}><Text style={styles.h2}>{profile.name}</Text><Text style={styles.location}>{mode === 'owner' ? 'Pet Owner' : 'Bonus Human'}</Text><Pill>Profile 85% complete</Pill></View></View><SectionTitle eyebrow="ACCOUNT" title="Your Bonus Human hub" /><View style={styles.accountRows}>{rows.map(([id, title, detail]) => <Pressable accessibilityRole="button" accessibilityLabel={title} key={id} onPress={() => id === 'pets' ? onManagePets() : ['mode', 'edit', 'settings'].includes(id) ? setScreen(id) : null} style={styles.accountRow}><View style={styles.accountRowCopy}><Text style={styles.settingsText}>{title}</Text><Text style={styles.accountRowDetail}>{detail}</Text></View><Ionicons name="chevron-forward" size={18} color={C.muted} /></Pressable>)}</View><View style={styles.valuesSection}><Text style={styles.lookingLabel}>THE BONUS HUMAN PROMISE</Text><Text style={styles.body}>The pet’s wellbeing comes first. Pet Owners stay responsible. Bonus Humans give time because the Connection itself is valuable.</Text></View></ScrollView></View>;
 }
 
 const tabs = [
   { id: 'discover', label: 'Discover', icon: 'search-outline', activeIcon: 'search' },
-  { id: 'pets', label: 'Pets', icon: 'paw-outline', activeIcon: 'paw' },
   { id: 'connections', label: 'Connections', icon: 'people-outline', activeIcon: 'people' },
+  { id: 'pets', label: 'Pets', icon: 'paw-outline', activeIcon: 'paw' },
   { id: 'feed', label: 'Feed', icon: 'images-outline', activeIcon: 'images' },
-  { id: 'profile', label: 'Profile', icon: 'person-outline', activeIcon: 'person' },
 ];
+const INITIAL_CONNECTION = { active: true, stage: 0, event: null, recurring: null, endReason: '' };
 
-export default function App() {
-  const [tab, setTab] = useState('discover');
+export default function App({ initialConnection = INITIAL_CONNECTION }) {
+  const [tab, setTab] = useState(initialConnection.active ? 'connections' : 'discover');
   const [detail, setDetail] = useState(null);
   const [mode, setMode] = useState('owner');
+  const [profiles, setProfiles] = useState(initialProfiles);
   const [decisions, setDecisions] = useState({});
+  const [connection, setConnection] = useState(initialConnection);
+  const [messages, setMessages] = useState([{ id: 1, who: 'Haley & Ari', text: 'We would love to meet you and Zuki somewhere quiet.' }, { id: 2, who: 'Mike', text: 'That sounds great. She does best with slow introductions.' }, { id: 3, who: 'Activity', text: 'Mike and Haley & Ari connected. Next up: plan a Meet & Greet.', system: true }]);
   const setDecision = (id, status) => setDecisions(current => { const next = { ...current }; if (status) next[id] = status; else delete next[id]; return next; });
   const selectTab = id => { setDetail(null); setTab(id); };
   const openAccount = () => setDetail({ kind: 'account' });
-  const openGallery = () => setDetail({ kind: 'gallery' });
-  const openRelationship = () => { setDetail(null); setTab('pets'); };
-  const content = detail?.kind === 'person' ? <PersonProfile profile={detail.profile} onBack={() => setDetail(null)} decision={decisions[detail.profile.id]} setDecision={setDecision} />
-    : detail?.kind === 'account' ? <Account mode={mode} onModeChange={setMode} onBack={() => setDetail(null)} onOpenRelationship={openRelationship} onOpenGallery={openGallery} />
-    : detail?.kind === 'gallery' ? <UIGallery onBack={() => setDetail({ kind: 'account' })} />
-    : tab === 'discover' ? <Discovery mode={mode} onModeChange={setMode} decisions={decisions} setDecision={setDecision} onOpen={profile => setDetail({ kind: 'person', profile })} onAccount={openAccount} />
-    : tab === 'pets' ? <PetsHub onGoFeed={() => selectTab('feed')} onAccount={openAccount} />
-    : tab === 'connections' ? <Connections onAccount={openAccount} decisions={decisions} setDecision={setDecision} onOpen={profile => setDetail({ kind: 'person', profile })} />
-    : tab === 'feed' ? <Feed onAccount={openAccount} />
-    : <Account mode={mode} onModeChange={setMode} onOpenRelationship={openRelationship} onOpenGallery={openGallery} />;
+  const openPerson = (profile, resultSet = profiles, profileIndex = 0) => setDetail({ kind: 'person', profile, resultSet, profileIndex });
+  const navigatePerson = amount => setDetail(current => { const nextIndex = (current.profileIndex + amount + current.resultSet.length) % current.resultSet.length; return { ...current, profileIndex: nextIndex, profile: current.resultSet[nextIndex] }; });
+  const content = detail?.kind === 'person' ? <PersonProfile profile={detail.profile} profiles={detail.resultSet} profileIndex={detail.profileIndex} onNavigate={navigatePerson} onBack={() => setDetail(null)} decision={decisions[detail.profile.id]} setDecision={setDecision} />
+    : detail?.kind === 'account' ? <Account mode={mode} onModeChange={setMode} onBack={() => setDetail(null)} profile={profiles.find(profile => profile.id === 'mike')} onSaveProfile={updated => setProfiles(current => current.map(profile => profile.id === updated.id ? updated : profile))} onManagePets={() => selectTab('pets')} />
+    : detail?.kind === 'pet' ? <ZukiDetail onBack={() => setDetail(null)} onAccount={openAccount} />
+    : tab === 'discover' ? <Discovery mode={mode} profiles={profiles} decisions={decisions} setDecision={setDecision} onOpen={openPerson} onAccount={openAccount} />
+    : tab === 'pets' ? <PetsHub mode={mode} onAccount={openAccount} />
+    : tab === 'connections' ? <Connections onAccount={openAccount} decisions={decisions} setDecision={setDecision} onOpen={openPerson} profiles={profiles} connection={connection} setConnection={setConnection} messages={messages} setMessages={setMessages} onOpenPet={() => setDetail({ kind: 'pet' })} />
+    : <Feed onAccount={openAccount} />;
   return <SafeAreaView style={styles.safe}><StatusBar barStyle="dark-content" backgroundColor={C.paper} /><View style={styles.appShell}>{content}{!detail && <View style={styles.tabBar}>{tabs.map(({ id, icon, activeIcon, label }) => <Pressable accessibilityRole="button" accessibilityLabel={`${label} tab`} key={id} onPress={() => selectTab(id)} style={styles.tab}><Ionicons name={tab === id ? activeIcon : icon} size={22} color={tab === id ? C.sage : '#7E8982'} style={styles.tabIcon} /><Text style={[styles.tabLabel, tab === id && styles.tabActive]}>{label}</Text>{tab === id && <View style={styles.tabDot} />}</Pressable>)}</View>}</View></SafeAreaView>;
 }
 
@@ -484,6 +513,8 @@ const styles = StyleSheet.create({
   filterCategoryRow: { gap: 8, paddingBottom: 14, paddingRight: 12 }, filterCategoryChip: { minHeight: 38, flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, borderRadius: 99, borderWidth: 1, borderColor: C.line, backgroundColor: C.white }, filterCategoryChipActive: { backgroundColor: C.sage, borderColor: C.sage }, filterCategoryText: { color: C.sage, fontSize: 11, fontWeight: '800' }, filterCategoryTextActive: { color: C.white }, sheetLayer: { flex: 1, justifyContent: 'flex-end' }, sheetScrim: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(39,51,45,.36)' }, filterSheet: { maxHeight: '82%', backgroundColor: C.paper, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: 18, ...Platform.select({ web: { boxShadow: '0 -10px 32px rgba(39,51,45,.18)' }, default: { elevation: 10 } }) }, sheetHandle: { width: 42, height: 4, borderRadius: 2, backgroundColor: '#C9CEC9', alignSelf: 'center', marginTop: 10 }, sheetHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingTop: 16, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: C.line }, sheetClose: { width: 38, height: 38, borderRadius: 19, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' }, sheetContent: { paddingHorizontal: 20, paddingVertical: 16 }, sheetActions: { flexDirection: 'row', gap: 12, paddingHorizontal: 20, paddingTop: 12, borderTopWidth: 1, borderTopColor: C.line }, distanceBlock: { paddingVertical: 4, marginBottom: 8 }, distanceHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }, distanceValue: { color: C.sage, fontSize: 16, fontWeight: '800' }, sliderTrack: { height: 28, borderRadius: 14, backgroundColor: C.sageLight, marginTop: 12, justifyContent: 'center' }, sliderFill: { position: 'absolute', left: 0, height: 6, borderRadius: 3, backgroundColor: C.sage }, sliderThumb: { position: 'absolute', marginLeft: -11, width: 22, height: 22, borderRadius: 11, backgroundColor: C.white, borderWidth: 3, borderColor: C.sage, elevation: 2 }, sliderLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 3 }, sliderLabel: { color: C.muted, fontSize: 9 }, filterHelp: { color: C.muted, fontSize: 11, marginBottom: 8 }, filterChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }, filterChip: { paddingVertical: 9, paddingHorizontal: 12, borderRadius: 99, borderWidth: 1, borderColor: C.line, backgroundColor: C.paper }, filterChipActive: { backgroundColor: C.sage, borderColor: C.sage }, filterChipText: { color: C.muted, fontSize: 12, fontWeight: '700' }, filterChipTextActive: { color: C.white }, scheduleRow: { minHeight: 46, flexDirection: 'row', alignItems: 'center', borderTopWidth: 1, borderTopColor: C.line }, scheduleDay: { flex: 1, color: C.ink, fontSize: 13, fontWeight: '700' }, scheduleTimes: { flexDirection: 'row', gap: 7 }, pillRowCompact: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 7 }, attributeList: { borderTopWidth: 1, borderTopColor: C.line }, attributeRow: { borderBottomWidth: 1, borderBottomColor: C.line, paddingVertical: 14 }, attributeTitle: { color: C.ink, fontWeight: '800', fontSize: 13 },
   listLabel: { color: C.muted, fontSize: 10, fontWeight: '800', letterSpacing: 1.2, marginTop: 18, marginBottom: 8 }, petListCard: { flexDirection: 'row', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 17, padding: 12, marginBottom: 12, alignItems: 'center' }, petListImage: { width: 74, height: 74, borderRadius: 16, resizeMode: 'cover' }, cardLink: { color: C.sage, fontSize: 11, fontWeight: '800', marginTop: 6 },
   connectionTabs: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: C.line, marginTop: 10 }, connectionTab: { flex: 1, paddingVertical: 12, alignItems: 'center' }, connectionTabActive: { borderBottomWidth: 2, borderBottomColor: C.clay }, connectionTabText: { color: C.muted, fontSize: 10, fontWeight: '700' }, connectionTabTextActive: { color: C.ink }, connectedCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 18, padding: 13 }, connectedImage: { width: 76, height: 90, borderRadius: 15, resizeMode: 'cover' }, connectedTitleRow: { flexDirection: 'row', justifyContent: 'space-between' }, connectedStatus: { color: C.sage, fontSize: 11, fontWeight: '800', marginTop: 6 }, messagePreview: { color: C.muted, fontSize: 12, marginTop: 7, fontStyle: 'italic' }, unreadDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: C.clay, alignItems: 'center', justifyContent: 'center' }, unreadText: { color: C.white, fontWeight: '800', fontSize: 10 }, decisionListCard: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 17, padding: 12, marginBottom: 12 }, decisionProfileLink: { flexDirection: 'row', alignItems: 'center' }, decisionImage: { width: 68, height: 72, borderRadius: 14, resizeMode: 'cover' }, connectionSummary: { flexDirection: 'row', backgroundColor: C.sageLight, padding: 12, alignItems: 'center' }, chat: { padding: 18, gap: 12 }, bubble: { maxWidth: '82%', padding: 13, borderRadius: 16 }, bubbleMine: { alignSelf: 'flex-end', backgroundColor: C.sage }, bubbleTheirs: { alignSelf: 'flex-start', backgroundColor: C.white, borderWidth: 1, borderColor: C.line }, bubbleWho: { fontSize: 9, fontWeight: '800', color: C.clay, marginBottom: 4 }, bubbleText: { color: C.ink, fontSize: 14, lineHeight: 20 }, chatComposer: { flexDirection: 'row', padding: 12, borderTopWidth: 1, borderTopColor: C.line, backgroundColor: C.white, alignItems: 'center', gap: 8 },
+  detailSegment: { marginHorizontal: 20 }, timeFields: { flexDirection: 'row', gap: 10 }, timeField: { flex: 1 }, eventCopy: { flex: 1 }, regularActions: { gap: 10 }, inlineActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginTop: 6 }, stageActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 12 }, activityBubble: { alignSelf: 'center', backgroundColor: C.sageLight, borderRadius: 12, paddingVertical: 10, paddingHorizontal: 14, maxWidth: '92%' }, activityText: { color: C.sage, fontSize: 11, lineHeight: 16, textAlign: 'center', fontWeight: '700' }, endConnection: { alignSelf: 'center', padding: 14, marginTop: 28 }, endConnectionText: { color: C.clay, fontSize: 13, fontWeight: '800' }, dialogLayer: { flex: 1, backgroundColor: 'rgba(39,51,45,.42)', alignItems: 'center', justifyContent: 'center', padding: 20 }, dialog: { width: '100%', maxWidth: 440, backgroundColor: C.paper, borderRadius: 22, padding: 20 }, reportLink: { paddingVertical: 14, alignSelf: 'flex-start' },
   breadcrumb: { backgroundColor: C.sageLight, borderRadius: 10, padding: 9, marginTop: 14 }, breadcrumbText: { color: C.sage, fontSize: 10, fontWeight: '700' }, modeToggle: { flexDirection: 'row', gap: 10 }, modeChoice: { flex: 1, borderWidth: 1, borderColor: C.line, borderRadius: 15, padding: 14, backgroundColor: C.white }, modeChoiceActive: { borderColor: C.sage, backgroundColor: C.sageLight }, modeChoiceTitle: { color: C.ink, fontWeight: '800', fontSize: 13 }, modeChoiceTitleActive: { color: C.sage }, modeChoiceText: { color: C.muted, fontSize: 10, marginTop: 4 }, fieldLabel: { color: C.muted, fontSize: 11, fontWeight: '800', marginTop: 10, marginBottom: 5 }, field: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 12, minHeight: 44, paddingHorizontal: 12, color: C.ink }, fieldMultiline: { minHeight: 82, paddingTop: 11, textAlignVertical: 'top' }, photoManager: { flexDirection: 'row', flexWrap: 'wrap', gap: 9 }, photoThumb: { width: 72, height: 72, borderRadius: 13, resizeMode: 'cover' }, addPhoto: { width: 92, height: 72, borderRadius: 13, borderWidth: 1, borderStyle: 'dashed', borderColor: C.sage, alignItems: 'center', justifyContent: 'center' }, addPhotoPlus: { color: C.sage, fontSize: 20 }, addPhotoText: { color: C.sage, fontSize: 8, fontWeight: '800' }, preferenceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderTopWidth: 1, borderBottomWidth: 1, borderColor: C.line, paddingVertical: 14, marginBottom: 15 }, switchTrack: { width: 44, height: 25, borderRadius: 13, backgroundColor: '#CCD2CE', padding: 3 }, switchTrackOn: { backgroundColor: C.sage }, switchKnob: { width: 19, height: 19, borderRadius: 10, backgroundColor: C.white }, switchKnobOn: { marginLeft: 19 }, galleryIntro: { color: C.muted, fontSize: 14, lineHeight: 21, marginTop: 20 }, gallerySection: { backgroundColor: C.white, borderWidth: 1, borderColor: C.line, borderRadius: 16, padding: 15, gap: 12 }, iconButtonRow: { flexDirection: 'row', gap: 10 }, galleryIconButton: { width: 44, height: 44, borderRadius: 22, borderWidth: 1, borderColor: C.line, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' }, galleryIconButtonPrimary: { backgroundColor: C.sage, borderColor: C.sage }, galleryIcon: { color: C.ink, fontSize: 24, fontWeight: '800' }, galleryPhoto: { width: '100%', height: 230, borderRadius: 14, resizeMode: 'cover' }, galleryProfileImage: { width: '100%', height: 250, resizeMode: 'cover' },
+  accountRows: { borderTopWidth: 1, borderTopColor: C.line }, accountRow: { flexDirection: 'row', alignItems: 'center', minHeight: 64, borderBottomWidth: 1, borderBottomColor: C.line }, accountRowCopy: { flex: 1 }, accountRowDetail: { color: C.muted, fontSize: 11, marginTop: 3 },
   tabBar: { height: 68, flexDirection: 'row', borderTopWidth: 1, borderTopColor: C.line, backgroundColor: C.white, paddingBottom: Platform.OS === 'ios' ? 5 : 0 }, tab: { flex: 1, alignItems: 'center', justifyContent: 'center', position: 'relative' }, tabIcon: { height: 23 }, tabLabel: { color: '#7E8982', fontSize: 9, marginTop: 2, fontWeight: '700' }, tabActive: { color: C.sage }, tabDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2, backgroundColor: C.clay },
 });
