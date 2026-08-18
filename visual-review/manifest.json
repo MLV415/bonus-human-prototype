@@ -7,7 +7,7 @@
     "width": 780,
     "height": 1688
   },
-  "generatedAt": "August 17, 2026 at 11:18 PM",
+  "generatedAt": "August 18, 2026 at 12:07 AM",
   "captures": [
     {
       "section": "Discover",
@@ -80,36 +80,36 @@
       "svg": "svg/10-person-profile-passed.svg"
     },
     {
-      "section": "Matches",
-      "label": "Connections",
-      "file": "screenshots/11-matches-connections.png",
-      "png": "screenshots/11-matches-connections.png",
-      "svg": "svg/11-matches-connections.svg"
+      "section": "Connections",
+      "label": "Connected",
+      "file": "screenshots/11-connections-connected.png",
+      "png": "screenshots/11-connections-connected.png",
+      "svg": "svg/11-connections-connected.svg"
     },
     {
-      "section": "Matches",
+      "section": "Connections",
       "label": "Interested profiles",
-      "file": "screenshots/12-matches-interested.png",
-      "png": "screenshots/12-matches-interested.png",
-      "svg": "svg/12-matches-interested.svg"
+      "file": "screenshots/12-connections-interested.png",
+      "png": "screenshots/12-connections-interested.png",
+      "svg": "svg/12-connections-interested.svg"
     },
     {
-      "section": "Matches",
+      "section": "Connections",
       "label": "Passed profiles",
-      "file": "screenshots/13-matches-passed.png",
-      "png": "screenshots/13-matches-passed.png",
-      "svg": "svg/13-matches-passed.svg"
+      "file": "screenshots/13-connections-passed.png",
+      "png": "screenshots/13-connections-passed.png",
+      "svg": "svg/13-connections-passed.svg"
     },
     {
-      "section": "Matches",
+      "section": "Connections",
       "label": "Chat conversation",
-      "file": "screenshots/14-matches-chat.png",
-      "png": "screenshots/14-matches-chat.png",
-      "svg": "svg/14-matches-chat.svg"
+      "file": "screenshots/14-connections-chat.png",
+      "png": "screenshots/14-connections-chat.png",
+      "svg": "svg/14-connections-chat.svg"
     },
     {
       "section": "Pets",
-      "label": "Pets and relationships overview",
+      "label": "Pets and Pet Circle overview",
       "file": "screenshots/15-pets-overview.png",
       "png": "screenshots/15-pets-overview.png",
       "svg": "svg/15-pets-overview.svg"
@@ -137,7 +137,7 @@
     },
     {
       "section": "Pets",
-      "label": "Availability and scheduling confirmed",
+      "label": "Availability and Visit confirmed",
       "file": "screenshots/19-availability-confirmed.png",
       "png": "screenshots/19-availability-confirmed.png",
       "svg": "svg/19-availability-confirmed.svg"

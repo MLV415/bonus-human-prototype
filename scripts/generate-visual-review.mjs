@@ -254,7 +254,7 @@ async function main() {
       captures.push({ file, section, label, path: outputPath });
       process.stdout.write(`Captured ${file}\n`);
     };
-    const clickTab = label => page.getByRole('button', { name: new RegExp(`${label}$`) }).click();
+    const clickTab = label => page.getByRole('button', { name: new RegExp(`${label}(?: tab)?$`) }).click();
     const scrollToText = async (text, exact = true) => {
       const locator = page.getByText(text, { exact }).first();
       await locator.scrollIntoViewIfNeeded();
@@ -268,21 +268,27 @@ async function main() {
     await capture('02-discover-another-profile.png', 'Discover', 'Another profile - Jordan');
 
     await reset();
-    await page.getByRole('button', { name: /Filters/ }).click();
+    await page.getByRole('button', { name: /Distance · 10 mi filter/ }).click();
     await capture('03-discover-filters-open.png', 'Discover', 'Filters open');
+    await page.getByText('Done', { exact: true }).click();
+    await page.getByRole('button', { name: /^Schedule filter$/ }).click();
     await page.getByRole('button', { name: 'Thursday PM' }).click();
     await page.getByRole('button', { name: 'Saturday PM' }).click();
+    await page.getByText('Done', { exact: true }).click();
+    await page.getByRole('button', { name: /^Experience filter$/ }).click();
     await page.getByText('Senior dog care', { exact: true }).click();
     await page.getByText('Medication / pills', { exact: true }).click();
+    await page.getByText('Done', { exact: true }).click();
+    await page.getByRole('button', { name: /^Home filter$/ }).click();
     await page.getByText('Apartment', { exact: true }).click();
     await page.getByText('No yard', { exact: true }).click();
-    await scrollToText('HOME ENVIRONMENT');
+    await page.getByText('Done', { exact: true }).click();
     await capture('04-discover-filters-multi-select.png', 'Discover', 'Filters with multiple selections');
 
     await reset();
-    await page.getByRole('button', { name: /Filters/ }).click();
+    await page.getByRole('button', { name: /^Home filter$/ }).click();
     await page.getByText('Has dogs', { exact: true }).click();
-    await page.getByText('Show profiles', { exact: true }).click();
+    await page.getByText('Done', { exact: true }).click();
     await capture('05-discover-no-results.png', 'Discover', 'No-results state');
 
     await reset();
@@ -305,40 +311,40 @@ async function main() {
     await capture('10-person-profile-passed.png', 'Person Profile', 'Passed state');
 
     await reset();
-    await clickTab('Matches');
-    await capture('11-matches-connections.png', 'Matches', 'Connections');
+    await clickTab('Connections');
+    await capture('11-connections-connected.png', 'Connections', 'Connected');
 
     await reset();
     await page.getByText('Interested', { exact: true }).click();
-    await clickTab('Matches');
+    await clickTab('Connections');
     await page.getByText('Interested 1', { exact: true }).click();
-    await capture('12-matches-interested.png', 'Matches', 'Interested profiles');
+    await capture('12-connections-interested.png', 'Connections', 'Interested profiles');
 
     await reset();
     await page.getByText('Pass', { exact: true }).click();
-    await clickTab('Matches');
+    await clickTab('Connections');
     await page.getByText('Passed 1', { exact: true }).click();
-    await capture('13-matches-passed.png', 'Matches', 'Passed profiles');
+    await capture('13-connections-passed.png', 'Connections', 'Passed profiles');
 
     await reset();
-    await clickTab('Matches');
+    await clickTab('Connections');
     await page.getByText('Haley & Ari', { exact: true }).click();
-    await capture('14-matches-chat.png', 'Matches', 'Chat conversation');
+    await capture('14-connections-chat.png', 'Connections', 'Chat conversation');
 
     await reset();
     await clickTab('Pets');
-    await capture('15-pets-overview.png', 'Pets', 'Pets and relationships overview');
+    await capture('15-pets-overview.png', 'Pets', 'Pets and Pet Circle overview');
     await page.getByText('Zuki', { exact: true }).click();
     await capture('16-zuki-profile.png', 'Pets', 'Zuki profile');
     await page.getByText('Relationship', { exact: true }).click();
     await capture('17-zuki-relationship.png', 'Pets', 'Zuki relationship view');
-    await scrollToText('RELATIONSHIP STATUS');
+    await scrollToText('RELATIONSHIP STAGE');
     await capture('18-relationship-stage-progression.png', 'Pets', 'Relationship-stage progression');
-    await scrollToText('I’d like this time with Zuki');
-    await page.getByText('I’d like this time with Zuki', { exact: true }).click();
-    await page.getByText('Confirm as Mike', { exact: true }).click();
-    await scrollToText('Zuki time confirmed');
-    await capture('19-availability-confirmed.png', 'Pets', 'Availability and scheduling confirmed');
+    await scrollToText('Request this visit');
+    await page.getByText('Request this visit', { exact: true }).click();
+    await page.getByText('Confirm visit as Mike', { exact: true }).click();
+    await scrollToText('Visit confirmed');
+    await capture('19-availability-confirmed.png', 'Pets', 'Availability and Visit confirmed');
     await scrollToText('View care info');
     await page.getByText('View care info', { exact: true }).click();
     await capture('20-care-information.png', 'Pets', 'Care information');
@@ -364,7 +370,7 @@ async function main() {
     await capture('26-account-settings.png', 'Profile', 'Mode and settings controls');
     await scrollToText('First name');
     await page.getByLabel('First name').fill('Michael');
-    await page.getByLabel('Short bio').fill('Zuki’s primary human, building a small circle of trusted people.');
+    await page.getByLabel('Short bio').fill('Zuki’s Pet Owner, thoughtfully growing her Pet Circle.');
     await capture('27-account-editing.png', 'Profile', 'Profile editing state');
 
     await buildReviewArtifacts(browser);

@@ -1,6 +1,15 @@
 import React from 'react';
 import { fireEvent, render, screen, within } from '@testing-library/react-native';
 
+jest.mock('@expo/vector-icons/Ionicons', () => {
+  const React = require('react');
+  const { Text } = require('react-native');
+  return {
+    __esModule: true,
+    default: ({ name, ...props }) => <Text {...props}>{name}</Text>,
+  };
+});
+
 import App from '../App';
 
 function openZuki() {
@@ -17,7 +26,7 @@ describe('Bonus Human core and iteration flows', () => {
   test('discovery renders Haley and Ari in Pet Owner mode', () => {
     render(<App />);
     expect(screen.getByText('Find their people.')).toBeTruthy();
-    expect(screen.getByText('Pet Owner mode · viewing bonus humans')).toBeTruthy();
+    expect(screen.getByText('Pet Owner mode · viewing Bonus Humans')).toBeTruthy();
     expect(screen.getByText('Haley & Ari')).toBeTruthy();
     expect(screen.queryByText('Mike + Zuki')).toBeNull();
     expect(screen.queryByText('Interested 0')).toBeNull();
@@ -45,22 +54,22 @@ describe('Bonus Human core and iteration flows', () => {
     expect(screen.queryByText('Tap photo or use arrows to browse')).toBeNull();
   });
 
-  test('an Interested decision can be revisited and undone from Matches', () => {
+  test('an Interested decision can be revisited and undone from Connections', () => {
     render(<App />);
     fireEvent.press(screen.getByText('Interested'));
     expect(screen.getByText('Undo interested')).toBeTruthy();
-    fireEvent.press(screen.getByText('Matches'));
+    fireEvent.press(screen.getByText('Connections'));
     fireEvent.press(screen.getByText('Interested 1'));
     expect(screen.getByText('Haley & Ari')).toBeTruthy();
     fireEvent.press(screen.getByText('Undo interested'));
     expect(screen.getByText('No interested profiles yet')).toBeTruthy();
   });
 
-  test('a Pass can be revisited and reconsidered from Matches', () => {
+  test('a Pass can be revisited and reconsidered from Connections', () => {
     render(<App />);
     fireEvent.press(screen.getByText('Pass'));
     expect(screen.getByText('Reconsider pass')).toBeTruthy();
-    fireEvent.press(screen.getByText('Matches'));
+    fireEvent.press(screen.getByText('Connections'));
     fireEvent.press(screen.getByText('Passed 1'));
     expect(screen.getByText('Haley & Ari')).toBeTruthy();
     fireEvent.press(screen.getByText('Reconsider pass'));
@@ -69,45 +78,54 @@ describe('Bonus Human core and iteration flows', () => {
 
   test('Discover filters support multiple schedule, experience, and home selections', () => {
     render(<App />);
-    fireEvent.press(screen.getByText('⌁ Filters'));
-    expect(screen.getByText('Distance / radius')).toBeTruthy();
-    expect(screen.getByText('10 miles')).toBeTruthy();
-    expect(screen.getByText('SCHEDULE')).toBeTruthy();
-    expect(screen.getByText('EXPERIENCE')).toBeTruthy();
-    expect(screen.getByText('HOME ENVIRONMENT')).toBeTruthy();
+    expect(screen.getByText('Distance · 10 mi')).toBeTruthy();
+    expect(screen.getByText('Schedule')).toBeTruthy();
+    expect(screen.getByText('Experience')).toBeTruthy();
+    expect(screen.getByText('Home')).toBeTruthy();
+
+    fireEvent.press(screen.getByLabelText('Schedule filter'));
+    expect(screen.getByText('When could a visit work?')).toBeTruthy();
     expect(screen.getByText('Monday')).toBeTruthy();
     expect(screen.getByText('Sunday')).toBeTruthy();
-    expect(screen.getByText('Injections / shots')).toBeTruthy();
-    expect(screen.getByText('Has dogs')).toBeTruthy();
-    expect(screen.getByText('Has cats')).toBeTruthy();
-
     const thursdayPm = screen.getByLabelText('Thursday PM');
     const saturdayPm = screen.getByLabelText('Saturday PM');
     fireEvent.press(thursdayPm);
     fireEvent.press(saturdayPm);
-    fireEvent.press(screen.getByText('Senior dog care'));
-    fireEvent.press(screen.getByText('Medication / pills'));
-    fireEvent.press(screen.getByText('Apartment'));
-    fireEvent.press(screen.getByText('No yard'));
-
     expect(thursdayPm.props.accessibilityState.selected).toBe(true);
     expect(saturdayPm.props.accessibilityState.selected).toBe(true);
+    fireEvent.press(screen.getByText('Done'));
+
+    fireEvent.press(screen.getByLabelText('Experience filter'));
+    expect(screen.getByText('Injections / shots')).toBeTruthy();
+    fireEvent.press(screen.getByText('Senior dog care'));
+    fireEvent.press(screen.getByText('Medication / pills'));
     expect(screen.getByRole('button', { name: 'Senior dog care' }).props.accessibilityState.selected).toBe(true);
     expect(screen.getByRole('button', { name: 'Medication / pills' }).props.accessibilityState.selected).toBe(true);
+    fireEvent.press(screen.getByText('Done'));
+
+    fireEvent.press(screen.getByLabelText('Home filter'));
+    expect(screen.getByText('Has dogs')).toBeTruthy();
+    expect(screen.getByText('Has cats')).toBeTruthy();
+    fireEvent.press(screen.getByText('Apartment'));
+    fireEvent.press(screen.getByText('No yard'));
     expect(screen.getByRole('button', { name: 'Apartment' }).props.accessibilityState.selected).toBe(true);
     expect(screen.getByRole('button', { name: 'No yard' }).props.accessibilityState.selected).toBe(true);
-    fireEvent.press(screen.getByText('Show profiles'));
+    fireEvent.press(screen.getByText('Done'));
+
+    expect(screen.getByText('Schedule · 2')).toBeTruthy();
+    expect(screen.getByText('Experience · 2')).toBeTruthy();
+    expect(screen.getByText('Home · 2')).toBeTruthy();
     expect(screen.getByText('Haley & Ari')).toBeTruthy();
     expect(screen.getByText('1 of 1')).toBeTruthy();
   });
 
   test('Increase distance recovers directly from a no-results state', () => {
     render(<App />);
-    fireEvent.press(screen.getByText('⌁ Filters'));
+    fireEvent.press(screen.getByLabelText('Distance · 10 mi filter'));
     fireEvent(screen.getByLabelText('Distance radius'), 'accessibilityAction', { nativeEvent: { actionName: 'decrement' } });
     expect(screen.getByLabelText('Distance radius').props.accessibilityValue.now).toBe(1);
-    fireEvent.press(screen.getByText('Show profiles'));
-    expect(screen.getByText('No profiles match these filters')).toBeTruthy();
+    fireEvent.press(screen.getByText('Done'));
+    expect(screen.getByText('No profiles fit these filters')).toBeTruthy();
     expect(screen.queryByText(/saved list/i)).toBeNull();
     fireEvent.press(screen.getByText('Increase distance'));
     expect(screen.getByText('Haley & Ari')).toBeTruthy();
@@ -115,10 +133,10 @@ describe('Bonus Human core and iteration flows', () => {
 
   test('Clear filters resets every facet and restores the full role-appropriate list', () => {
     render(<App />);
-    fireEvent.press(screen.getByText('⌁ Filters'));
+    fireEvent.press(screen.getByLabelText('Home filter'));
     fireEvent.press(screen.getByText('Has dogs'));
-    fireEvent.press(screen.getByText('Show profiles'));
-    expect(screen.getByText('No profiles match these filters')).toBeTruthy();
+    fireEvent.press(screen.getByText('Done'));
+    expect(screen.getByText('No profiles fit these filters')).toBeTruthy();
     fireEvent.press(screen.getByText('Clear filters'));
     expect(screen.getByText('Haley & Ari')).toBeTruthy();
     expect(screen.getByText('1 of 2')).toBeTruthy();
@@ -127,7 +145,7 @@ describe('Bonus Human core and iteration flows', () => {
   test('the compact Discover mode control switches user modes directly', () => {
     render(<App />);
     fireEvent.press(screen.getByLabelText('Switch mode. Currently Pet Owner mode'));
-    expect(screen.getByText('Bonus Human mode · viewing pets & owners')).toBeTruthy();
+    expect(screen.getByText('Bonus Human mode · viewing pets & Pet Owners')).toBeTruthy();
     expect(screen.getByText('Mike + Zuki')).toBeTruthy();
   });
 
@@ -136,7 +154,7 @@ describe('Bonus Human core and iteration flows', () => {
     fireEvent.press(screen.getByLabelText('Open account'));
     fireEvent.press(screen.getByText('Bonus Human mode'));
     fireEvent.press(screen.getByLabelText('Go back'));
-    expect(screen.getByText('Bonus Human mode · viewing pets & owners')).toBeTruthy();
+    expect(screen.getByText('Bonus Human mode · viewing pets & Pet Owners')).toBeTruthy();
     expect(screen.getByText('Mike + Zuki')).toBeTruthy();
     expect(screen.queryByText('Haley & Ari')).toBeNull();
   });
@@ -159,8 +177,8 @@ describe('Bonus Human core and iteration flows', () => {
     expect(screen.getByText('Primary action')).toBeTruthy();
     expect(screen.getByText('Destructive action')).toBeTruthy();
     expect(screen.getByText('Photo gallery treatment')).toBeTruthy();
-    expect(screen.getByText('Pet & relationship cards')).toBeTruthy();
-    expect(screen.getByText('Availability & confirmation')).toBeTruthy();
+    expect(screen.getByText('Pet cards & Relationship stages')).toBeTruthy();
+    expect(screen.getByText('Availability & Visit confirmation')).toBeTruthy();
 
     fireEvent.press(screen.getByLabelText('Gallery reaction example'));
     expect(screen.getByText('You love this')).toBeTruthy();
@@ -168,7 +186,7 @@ describe('Bonus Human core and iteration flows', () => {
     expect(screen.getByDisplayValue('Michael')).toBeTruthy();
   });
 
-  test('Pets supports multiple pet associations and opens Zuki’s profile', () => {
+  test('Pets supports owned pets and pet Connections and opens Zuki’s profile', () => {
     render(<App />);
     fireEvent.press(screen.getByText('Pets'));
     expect(screen.getByText('PETS YOU OWN')).toBeTruthy();
@@ -183,24 +201,24 @@ describe('Bonus Human core and iteration flows', () => {
   test('the relationship screen shows the current Regular Bonus Human stage', () => {
     render(<App />);
     openRelationship();
-    expect(screen.getByText('Zuki’s trusted people')).toBeTruthy();
+    expect(screen.getByText('Zuki’s Pet Circle')).toBeTruthy();
     expect(screen.getAllByText('Regular Bonus Human')).toHaveLength(2);
   });
 
-  test('a bonus human can select the proposed Thursday care window', () => {
+  test('a Bonus Human can propose the available Thursday Visit', () => {
     render(<App />);
     openRelationship();
-    fireEvent.press(screen.getByText('I’d like this time with Zuki'));
-    expect(screen.getByText('Request sent to Mike')).toBeTruthy();
-    expect(screen.getByText('Confirm as Mike')).toBeTruthy();
+    fireEvent.press(screen.getByText('Request this visit'));
+    expect(screen.getByText('Visit proposed to Mike')).toBeTruthy();
+    expect(screen.getByText('Confirm visit as Mike')).toBeTruthy();
   });
 
-  test('Mike can confirm the selected care window', () => {
+  test('Mike can confirm the proposed Visit', () => {
     render(<App />);
     openRelationship();
-    fireEvent.press(screen.getByText('I’d like this time with Zuki'));
-    fireEvent.press(screen.getByText('Confirm as Mike'));
-    expect(screen.getByText('Zuki time confirmed')).toBeTruthy();
+    fireEvent.press(screen.getByText('Request this visit'));
+    fireEvent.press(screen.getByText('Confirm visit as Mike'));
+    expect(screen.getByText('Visit confirmed')).toBeTruthy();
     expect(screen.getByText('Thursday, 7:00–11:00 PM · Haley & Ari')).toBeTruthy();
   });
 
@@ -215,10 +233,10 @@ describe('Bonus Human core and iteration flows', () => {
     expect(screen.getByText('Rose City Veterinary Care', { exact: false })).toBeTruthy();
   });
 
-  test('Matches opens a connection and sends a local message', () => {
+  test('Connections opens a Connection and sends a local message', () => {
     render(<App />);
-    fireEvent.press(screen.getByText('Matches'));
-    expect(screen.getByText('Planning a meet & greet', { exact: false })).toBeTruthy();
+    fireEvent.press(screen.getByText('Connections'));
+    expect(screen.getByText('Planning a Meet & Greet', { exact: false })).toBeTruthy();
     fireEvent.press(screen.getByText('Haley & Ari'));
     fireEvent.changeText(screen.getByPlaceholderText('Message Haley & Ari…'), 'Saturday afternoon works for us.');
     fireEvent.press(screen.getByText('Send'));
