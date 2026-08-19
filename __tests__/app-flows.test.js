@@ -1,208 +1,65 @@
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react-native';
-import App from '../App';
+import { act, fireEvent, render, screen, within } from '@testing-library/react-native';
+import { StyleSheet } from 'react-native';
+import App, { profileLibrary } from '../App';
 
 jest.mock('@expo/vector-icons/Ionicons', () => {
-  const React = require('react');
-  const { Text } = require('react-native');
+  const React = require('react'); const { Text } = require('react-native');
   return { __esModule: true, default: ({ name, ...props }) => <Text {...props}>{name}</Text> };
+});
+jest.mock('@react-native-community/datetimepicker', () => {
+  const React = require('react'); const { Pressable, Text } = require('react-native');
+  return { __esModule: true, default: ({ mode, value, onChange, accessibilityLabel }) => <Pressable accessibilityLabel={accessibilityLabel || `${mode} picker open`} onPress={() => onChange({}, new Date(value.getTime() + 3600000))}><Text>{mode} picker</Text></Pressable> };
 });
 
 const openTab = label => fireEvent.press(screen.getByLabelText(`${label} tab`));
+const openDiscover = () => openTab('Discover');
 const openConnection = () => fireEvent.press(screen.getByLabelText('Open Haley and Ari Connection'));
-const openAccount = () => fireEvent.press(screen.getByLabelText('Open account'));
+const swipeNext = () => fireEvent.press(screen.getByLabelText('Next profile'));
+const expireBanner = () => act(() => jest.advanceTimersByTime(4100));
 
-describe('Bonus Human cohesive product flows', () => {
-  test('uses four-tab navigation and lands existing users on Connections', () => {
-    render(<App />);
-    expect(screen.getByText('People you’re building with')).toBeTruthy();
-    ['Discover', 'Connections', 'Pets', 'Feed'].forEach(label => expect(screen.getByLabelText(`${label} tab`)).toBeTruthy());
-    expect(screen.queryByLabelText('Profile tab')).toBeNull();
-    expect(screen.getByText('● Meet & Greet')).toBeTruthy();
-  });
-
-  test('users without an active Connection land on Discover', () => {
-    render(<App initialConnection={{ active: false, stage: 0, event: null, recurring: null, endReason: '' }} />);
-    expect(screen.getByText('Find their people.')).toBeTruthy();
-  });
-
-  test('Connection card opens Overview rather than Chat', () => {
-    render(<App />);
-    openConnection();
-    expect(screen.getByText('Mike, Haley & Ari, and Zuki')).toBeTruthy();
-    expect(screen.getByText('Plan the first Meet & Greet')).toBeTruthy();
-    expect(screen.queryByPlaceholderText('Message Haley & Ari…')).toBeNull();
-  });
-
-  test('Connection detail toggles between Overview and Chat', () => {
-    render(<App />);
-    openConnection();
-    fireEvent.press(screen.getByLabelText('Chat Connection tab'));
-    expect(screen.getByPlaceholderText('Message Haley & Ari…')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Overview Connection tab'));
-    expect(screen.getByText('Plan the first Meet & Greet')).toBeTruthy();
-  });
-
-  test('Connection stage skipping and backtracking are reversible', () => {
-    render(<App />);
-    openConnection();
-    fireEvent.press(screen.getByText('Skip to Trial Visits'));
-    expect(screen.getByText('Try time together with Zuki')).toBeTruthy();
-    fireEvent.press(screen.getByText('Back to Meet & Greet'));
-    expect(screen.getByText('Plan the first Meet & Greet')).toBeTruthy();
-  });
-
-  test('Meet & Greet scheduling accepts date and times and records chat activity', () => {
-    render(<App />);
-    openConnection();
-    fireEvent.press(screen.getByText('Schedule Meet & Greet'));
-    fireEvent.changeText(screen.getByLabelText('Visit date'), 'Saturday, August 22');
-    fireEvent.changeText(screen.getByLabelText('Start time'), '10:00 AM');
-    fireEvent.changeText(screen.getByLabelText('End time'), '11:30 AM');
-    fireEvent.press(screen.getByText('Send request'));
-    expect(screen.getByText('Saturday, August 22 · 10:00 AM–11:30 AM')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Chat Connection tab'));
-    expect(screen.getByText(/requested a Meet & Greet: Saturday, August 22/)).toBeTruthy();
-  });
-
-  test('Pet Owner can confirm a requested event and shared state updates', () => {
-    render(<App />);
-    openConnection();
-    fireEvent.press(screen.getByText('Schedule Meet & Greet'));
-    fireEvent.press(screen.getByText('Send request'));
-    fireEvent.press(screen.getByText('Confirm as Mike'));
-    expect(screen.getByText('Confirmed')).toBeTruthy();
-    fireEvent.press(screen.getByLabelText('Chat Connection tab'));
-    expect(screen.getByText('Mike confirmed the Meet & Greet.')).toBeTruthy();
-  });
-
-  test('Regular Bonus Human stage offers one-off and recurring scheduling', () => {
-    render(<App />);
-    openConnection();
-    fireEvent.press(screen.getByText('Skip to Trial Visits'));
-    fireEvent.press(screen.getByText('Move to Regular Bonus Human'));
-    expect(screen.getByText('Request a one-off visit')).toBeTruthy();
-    fireEvent.press(screen.getByText('Manage recurring schedule'));
-    fireEvent.changeText(screen.getByLabelText('Recurring day'), 'Wednesday');
-    fireEvent.press(screen.getByText('Save recurring schedule'));
-    expect(screen.getByText('Every Wednesday · 7:00 PM–9:00 PM')).toBeTruthy();
-  });
-
-  test('Discover removes mode and photo-role overlays', () => {
-    render(<App />);
-    openTab('Discover');
-    expect(screen.getByText('Find their people.')).toBeTruthy();
-    expect(screen.getByText('Haley & Ari')).toBeTruthy();
-    expect(screen.queryByText(/mode · viewing/i)).toBeNull();
-    expect(screen.queryByText('BONUS HUMANS')).toBeNull();
-  });
-
-  test('detailed Discover profiles browse the filtered result set and preserve decisions', () => {
-    render(<App />);
-    openTab('Discover');
-    fireEvent.press(screen.getByText('View profile'));
-    expect(screen.getByText('1 of 2')).toBeTruthy();
-    fireEvent.press(screen.getByText('Interested'));
-    fireEvent.press(screen.getByText('Next →'));
-    expect(screen.getByText('Jordan')).toBeTruthy();
-    fireEvent.press(screen.getByText('← Previous'));
-    expect(screen.getByText('Undo interested')).toBeTruthy();
-  });
-
-  test('filter edits apply only after Done', () => {
-    render(<App />);
-    openTab('Discover');
-    fireEvent.press(screen.getByLabelText('Schedule filter'));
-    fireEvent.press(screen.getByLabelText('Thursday PM'));
-    expect(screen.queryByText('Schedule · 1')).toBeNull();
-    fireEvent.press(screen.getByText('Done'));
-    expect(screen.getByText('Schedule · 1')).toBeTruthy();
-    expect(screen.getByText('Haley & Ari')).toBeTruthy();
-  });
-
-  test('dismissing a filter discards staged changes', () => {
-    render(<App />);
-    openTab('Discover');
-    fireEvent.press(screen.getByLabelText('Experience filter'));
-    fireEvent.press(screen.getByText('Senior dog care'));
-    fireEvent.press(screen.getByLabelText('Cancel filter changes'));
-    expect(screen.queryByText('Experience · 1')).toBeNull();
-    fireEvent.press(screen.getByLabelText('Experience filter'));
-    expect(screen.getByLabelText('Senior dog care').props.accessibilityState.selected).toBe(false);
-  });
-
-  test('Connections tabs have no lifetime counters', () => {
-    render(<App />);
-    expect(screen.getByText('Interested')).toBeTruthy();
-    expect(screen.getByText('Passed')).toBeTruthy();
-    expect(screen.queryByText(/Interested \d/)).toBeNull();
-    expect(screen.queryByText(/Passed \d/)).toBeNull();
-  });
-
-  test('Pets is role-specific and remains available in Bonus Human mode', () => {
-    render(<App />);
-    openAccount();
-    fireEvent.press(screen.getByLabelText('Mode'));
-    fireEvent.press(screen.getByText('Bonus Human'));
-    fireEvent.press(screen.getByLabelText('Go back'));
-    fireEvent.press(screen.getByLabelText('Go back'));
-    openTab('Pets');
-    expect(screen.getByText('PETS IN YOUR CONNECTIONS')).toBeTruthy();
-    expect(screen.getByText('Connected through Mike')).toBeTruthy();
-    expect(screen.queryByText('PETS YOU OWN')).toBeNull();
-  });
-
-  test('pet page separates Profile from the practical Care Guide', () => {
-    render(<App />);
-    openTab('Pets');
-    fireEvent.press(screen.getByText('Zuki'));
-    expect(screen.getByText('What Zuki needs')).toBeTruthy();
-    fireEvent.press(screen.getByText('Care Guide'));
-    ['Today’s routine', 'Medication', 'Emergency contacts', 'Veterinary information'].forEach(text => expect(screen.getByText(text)).toBeTruthy());
-    expect(screen.queryByText('Connection stage')).toBeNull();
-  });
-
-  test('Account opens as a hub and development UI is absent', () => {
-    render(<App />);
-    openAccount();
-    ['Mode', 'Edit profile', 'Manage pets', 'Settings', 'Help', 'About'].forEach(label => expect(screen.getByLabelText(label)).toBeTruthy());
-    expect(screen.queryByText('UI Gallery (Dev)')).toBeNull();
-    expect(screen.queryByText('Development')).toBeNull();
-  });
-
-  test('filter-related profile attributes are editable and use shared Discover data', () => {
-    render(<App />);
-    openAccount();
-    fireEvent.press(screen.getByLabelText('Mode'));
-    fireEvent.press(screen.getByText('Bonus Human'));
-    fireEvent.press(screen.getByLabelText('Go back'));
-    fireEvent.press(screen.getByLabelText('Edit profile'));
-    fireEvent.changeText(screen.getByLabelText('Profile bio'), 'Mike is ready to build one thoughtful connection.');
-    fireEvent.press(screen.getByLabelText('Profile Wednesday PM'));
-    fireEvent.press(screen.getByLabelText('Profile experience Behavioral needs'));
-    fireEvent.press(screen.getByLabelText('Profile home House'));
-    fireEvent.press(screen.getByText('Save profile'));
-    fireEvent.press(screen.getByLabelText('Go back'));
-    fireEvent.press(screen.getByLabelText('Go back'));
-    openTab('Discover');
-    expect(screen.getByText('Mike is ready to build one thoughtful connection.')).toBeTruthy();
-  });
-
-  test('ending a Connection requires confirmation and optional feedback', () => {
-    render(<App />);
-    openConnection();
-    fireEvent.press(screen.getByText('End Connection'));
-    expect(screen.getByText('Are you sure?')).toBeTruthy();
-    fireEvent.press(screen.getByText("Availability didn't work"));
-    fireEvent.press(screen.getAllByText('End Connection')[1]);
-    expect(screen.getByText('This Connection has ended')).toBeTruthy();
-  });
-
-  test('Feed posting remains functional', () => {
-    render(<App />);
-    openTab('Feed');
-    fireEvent.changeText(screen.getByPlaceholderText('Share a Zuki update…'), 'Zuki enjoyed a sunny nap.');
-    fireEvent.press(screen.getByText('↑'));
-    expect(screen.getByText('Zuki enjoyed a sunny nap.')).toBeTruthy();
-  });
+describe('Bonus Human final prototype flows', () => {
+  afterEach(() => jest.useRealTimers());
+  test('uses five tabs and state-aware landing', () => { render(<App />); ['Discover', 'Connections', 'Pets', 'Feed', 'Account'].forEach(x => expect(screen.getByLabelText(`${x} tab`)).toBeTruthy()); expect(screen.getByText('People you’re building with')).toBeTruthy(); });
+  test('Discover filters retain staged controls and close through Done', () => { render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Distance · 10 mi filter')); expect(screen.getByText('Reset')).toBeTruthy(); expect(screen.queryByLabelText('Cancel filter changes')).toBeNull(); fireEvent.press(screen.getByText('Done')); expect(screen.queryByText('How nearby?')).toBeNull(); fireEvent.press(screen.getByLabelText('Schedule filter')); expect(screen.getByLabelText('Select all PM')).toBeTruthy(); expect(screen.getByText('Weekends')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Monday PM')); fireEvent.press(screen.getByLabelText('Dismiss filters')); expect(screen.getByLabelText('Schedule filter')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Visit type filter')); expect(screen.getByText('House sitting')).toBeTruthy(); fireEvent.press(screen.getByText('Done')); fireEvent.press(screen.getByLabelText('Home filter')); expect(screen.getByLabelText('Dogs No dogs')).toBeTruthy(); expect(screen.queryByText('Has cats')).toBeNull(); });
+  test('expanded profile data still respects AND filtering', () => { render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Schedule filter')); fireEvent.press(screen.getByLabelText('Monday AM')); fireEvent.press(screen.getByText('Done')); fireEvent.press(screen.getByLabelText('Experience filter')); fireEvent.press(screen.getByLabelText('Puppy care')); fireEvent.press(screen.getByText('Done')); fireEvent.press(screen.getByLabelText('Home filter')); fireEvent.press(screen.getByLabelText('Home type Apartment')); fireEvent.press(screen.getByText('Done')); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Alex')).toBeTruthy(); expect(screen.queryByLabelText('Open Haley & Ari profile')).toBeNull(); });
+  test('Discover card opens on tap', () => { render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Open Haley & Ari profile')); expect(screen.getByText('The practical fit')).toBeTruthy(); });
+  test('swipe navigation changes profile without opening it or making a decision', () => { render(<App />); openDiscover(); swipeNext(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Jordan')).toBeTruthy(); expect(screen.queryByText('The practical fit')).toBeNull(); expect(screen.queryByText('Request sent')).toBeNull(); });
+  test('committed swipe reuses the already-rendered destination gallery', () => { render(<App />); openDiscover(); const readyGallery = screen.getByLabelText('Jordan gallery'); expect(screen.getByLabelText('Next profile ready')).toBeTruthy(); swipeNext(); const activeCard = screen.getByLabelText('Discover swipe card'); expect(within(activeCard).getByText('Jordan')).toBeTruthy(); expect(within(activeCard).getByLabelText('Jordan gallery')).toBe(readyGallery); expect(within(activeCard).queryByText('Haley & Ari')).toBeNull(); expect(screen.getByLabelText('Previous profile ready')).toBeTruthy(); });
+  test('swiping past the first profile snaps back', () => { render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Previous profile')); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Haley & Ari')).toBeTruthy(); swipeNext(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Jordan')).toBeTruthy(); });
+  test('Discover removes visible Previous/Next and filter-row arrow', () => { render(<App />); openDiscover(); expect(screen.queryByText('← Previous')).toBeNull(); expect(screen.queryByText('Next →')).toBeNull(); expect(screen.queryByText('chevron-forward')).toBeNull(); });
+  test('Request sent banner appears after the card advances and remains temporarily actionable', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Connect')); expect(screen.getByText('Request sent')).toBeTruthy(); expect(screen.getByLabelText('Undo request')).toBeTruthy(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Jordan')).toBeTruthy(); expireBanner(); expect(screen.queryByLabelText('Discover confirmation banner')).toBeNull(); });
+  test('Undo from the request banner restores the profile to Discover', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Connect')); fireEvent.press(screen.getByLabelText('Undo request')); expect(screen.queryByLabelText('Discover confirmation banner')).toBeNull(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Haley & Ari')).toBeTruthy(); });
+  test('Not now advances immediately and remains reversible from its banner', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByText('Not now')); expect(screen.getByLabelText('Undo pass')).toBeTruthy(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Jordan')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Undo pass')); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Haley & Ari')).toBeTruthy(); });
+  test('Jordan mutual banner opens the Jordan Connection, never the Haley and Ari Connection', () => { jest.useFakeTimers(); render(<App />); openDiscover(); swipeNext(); fireEvent.press(screen.getByLabelText('Connect')); expect(screen.getByText("You're connected")).toBeTruthy(); expect(screen.getByLabelText('Open Jordan Connection')).toBeTruthy(); expect(screen.queryByLabelText('Open Jordan profile')).toBeNull(); fireEvent.press(screen.getByLabelText('Open Jordan Connection')); expect(screen.getAllByText('Jordan').length).toBeGreaterThan(0); expect(screen.queryByText('Haley & Ari')).toBeNull(); fireEvent.press(screen.getByLabelText('Go back')); expect(screen.getByLabelText('Discover tab')).toBeTruthy(); });
+  test('Requests management can restore a sent request to Discover', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Connect')); openTab('Connections'); fireEvent.press(screen.getByLabelText('Requests tab')); expect(screen.getByText('WANTS TO CONNECT')).toBeTruthy(); expect(screen.getByText('REQUEST SENT')).toBeTruthy(); fireEvent.press(screen.getByText('Undo request')); openDiscover(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Haley & Ari')).toBeTruthy(); });
+  test('Passed management can reconsider a profile back into Discover', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByText('Not now')); openTab('Connections'); fireEvent.press(screen.getByLabelText('Passed tab')); fireEvent.press(screen.getByText('Reconsider pass')); openDiscover(); expect(within(screen.getByLabelText('Discover swipe card')).getByText('Haley & Ari')).toBeTruthy(); });
+  test('group profile exposes joint, Haley, and Ari tabs', () => { render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Open Haley & Ari profile')); expect(screen.getByLabelText('Haley & Ari Discover profile tab')).toBeTruthy(); expect(screen.getByLabelText('Haley Discover profile tab')).toBeTruthy(); expect(screen.getByLabelText('Ari Discover profile tab')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Ari Discover profile tab')); expect(screen.getByText(/senior-rescue volunteer/)).toBeTruthy(); });
+  test('Discover profile context alone exposes Previous and Next browsing', () => { render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Open Haley & Ari profile')); expect(screen.getByText('← Previous')).toBeTruthy(); expect(screen.getByText('Next →')).toBeTruthy(); });
+  test('Connection profile navigation stays scoped to participants', () => { render(<App />); openConnection(); fireEvent.press(screen.getByLabelText('Open Haley and Ari profile')); expect(screen.queryByText('Next →')).toBeNull(); expect(screen.queryByText('Jordan')).toBeNull(); fireEvent.press(screen.getByLabelText('Go back')); expect(screen.getByLabelText('Overview Connection tab')).toBeTruthy(); });
+  test('profile opened from Requests cannot browse unrelated profiles', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Connect')); openTab('Connections'); fireEvent.press(screen.getByLabelText('Requests tab')); fireEvent.press(screen.getByLabelText('Open Haley & Ari profile')); expect(screen.queryByText('← Previous')).toBeNull(); expect(screen.queryByText('Next →')).toBeNull(); expect(screen.queryByText('Jordan')).toBeNull(); });
+  test('Haley and Ari Connection title excludes Zuki while keeping Zuki in participants', () => { render(<App />); openConnection(); expect(screen.getAllByText('Haley & Ari').length).toBeGreaterThan(0); expect(screen.queryByText('Haley & Ari + Zuki')).toBeNull(); expect(screen.getByText('Zuki')).toBeTruthy(); });
+  test('owner tabs are dynamic and Mochi has a photo', () => { render(<App />); openTab('Account'); fireEvent.press(screen.getByLabelText('Switch mode')); fireEvent.press(screen.getByText('Bonus Human')); openDiscover(); swipeNext(); fireEvent.press(screen.getByLabelText('Open Priya + Mochi profile')); expect(screen.getByLabelText('Priya Discover profile tab')).toBeTruthy(); expect(screen.getByLabelText('Mochi Discover profile tab')).toBeTruthy(); expect(screen.queryByLabelText('Mike Discover profile tab')).toBeNull(); fireEvent.press(screen.getByLabelText('Mochi Discover profile tab')); expect(screen.getByText('Life with Mochi')).toBeTruthy(); expect(screen.getByLabelText('Next photo')).toBeTruthy(); expect(screen.getByText('5 years old · Terrier mix')).toBeTruthy(); });
+  test('Zuki summary opens the canonical pet profile', () => { render(<App />); openTab('Account'); fireEvent.press(screen.getByLabelText('Switch mode')); fireEvent.press(screen.getByText('Bonus Human')); openDiscover(); fireEvent.press(screen.getByLabelText('Open Mike + Zuki profile')); fireEvent.press(screen.getByLabelText('Zuki Discover profile tab')); fireEvent.press(screen.getByText('Open Zuki’s full profile')); expect(screen.getByLabelText('Profile pet tab')).toBeTruthy(); expect(screen.getByLabelText('Care Guide pet tab')).toBeTruthy(); expect(screen.getByLabelText('Open Zuki emergency information')).toBeTruthy(); });
+  test('canonical pet profile keeps a true floating Emergency action and care access', () => { render(<App />); openTab('Pets'); fireEvent.press(screen.getByLabelText('Open Zuki Profile')); const dock = screen.getByLabelText('Floating Emergency action'); const dockStyle = StyleSheet.flatten(dock.props.style); expect(dockStyle.position).toBe('absolute'); expect(dockStyle.right).toBe(16); expect(dockStyle.backgroundColor).toBeUndefined(); expect(dockStyle.borderTopWidth).toBeUndefined(); expect(screen.getByLabelText('Open Zuki emergency information')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Care Guide pet tab')); expect(screen.getByLabelText('Heart medicine')).toBeTruthy(); });
+  test('final stage is Bonus Human with consistent back/forward controls', () => { render(<App />); openConnection(); expect(screen.getByText('Skip this step →')).toBeTruthy(); fireEvent.press(screen.getByText('Skip this step →')); expect(screen.getByText('← Back to Meet & Greet')).toBeTruthy(); expect(screen.getByText('Move to Bonus Human →')).toBeTruthy(); fireEvent.press(screen.getByText('Move to Bonus Human →')); expect(screen.getAllByText('Bonus Human').length).toBeGreaterThan(0); expect(screen.queryByText(/Regular Bonus Human/)).toBeNull(); });
+  test('shared scheduling sheet always exposes date, start, and end fields', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Schedule Meet & Greet')); ['Visit date', 'Start time', 'End time'].forEach(label => expect(screen.getByLabelText(label)).toBeTruthy()); fireEvent.press(screen.getByText('Cancel')); fireEvent.press(screen.getByText('Skip this step →')); fireEvent.press(screen.getByText('Schedule Trial Visit')); ['Visit date', 'Start time', 'End time'].forEach(label => expect(screen.getByLabelText(label)).toBeTruthy()); });
+  test('date and time fields render one native control without duplicates', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Schedule Meet & Greet')); ['Visit date', 'Start time', 'End time'].forEach(label => expect(screen.getAllByLabelText(label)).toHaveLength(1)); });
+  test('multiple visit requests remain independent in schedule summary', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Schedule Meet & Greet')); fireEvent.press(screen.getByText('Send request')); fireEvent.press(screen.getByText('Schedule Meet & Greet')); fireEvent.press(screen.getByText('Send request')); expect(screen.getAllByText('requested')).toHaveLength(2); expect(screen.getByText('Time together, at a glance')).toBeTruthy(); fireEvent.press(screen.getAllByText('Confirm as Mike')[0]); expect(screen.getByText('confirmed')).toBeTruthy(); expect(screen.getByText('requested')).toBeTruthy(); });
+  test('one-off visit can be edited and keeps its changed time', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Schedule Meet & Greet')); fireEvent.press(screen.getByText('Send request')); fireEvent.press(screen.getByText('Edit / reschedule')); expect(screen.getByText('Edit one-off visit')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Start time')); fireEvent.press(screen.getByText('Save new time')); expect(screen.getByText(/1:00 PM–4:00 PM/)).toBeTruthy(); });
+  test('one-off visit can be deleted from the schedule', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Schedule Meet & Greet')); fireEvent.press(screen.getByText('Send request')); expect(screen.getByText('UPCOMING VISITS')).toBeTruthy(); fireEvent.press(screen.getByText('Cancel visit')); expect(screen.queryByText('UPCOMING VISITS')).toBeNull(); expect(screen.queryByText('Cancel visit')).toBeNull(); });
+  test('scheduling activity includes date and time', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Schedule Meet & Greet')); fireEvent.press(screen.getByText('Send request')); fireEvent.press(screen.getByLabelText('Chat Connection tab')); expect(screen.getByText(/Haley & Ari requested a Meet & Greet: .* · .*–.*\./)).toBeTruthy(); });
+  test('recurring schedules sort and abbreviate days and remain visually distinct', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Skip this step →')); fireEvent.press(screen.getByText('Move to Bonus Human →')); fireEvent.press(screen.getByText('Manage recurring schedule')); fireEvent.press(screen.getByLabelText('Recurring Wednesday')); fireEvent.press(screen.getByLabelText('Recurring Tuesday')); fireEvent.press(screen.getByText('Add recurring window')); expect(screen.getAllByText(/Recurring · Tue, Wed, Thu/).length).toBeGreaterThan(0); expect(screen.getAllByText('RECURRING SCHEDULE').length).toBeGreaterThan(0); expect(screen.queryByText(/Tuesday, Wednesday, Thursday/)).toBeNull(); fireEvent.press(screen.getByText('Add recurring window')); expect(screen.getAllByText('Edit window')).toHaveLength(2); fireEvent.press(screen.getAllByText('Edit window')[0]); expect(screen.getByText('Save recurring window')).toBeTruthy(); fireEvent.press(screen.getAllByText('Delete window')[0]); expect(screen.getAllByText('Edit window')).toHaveLength(1); });
+  test('recurring editor opens focused and closes when leaving Bonus Human', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Skip this step →')); fireEvent.press(screen.getByText('Move to Bonus Human →')); fireEvent.press(screen.getByText('Manage recurring schedule')); expect(screen.getByText('Plan regular time together')).toBeTruthy(); fireEvent.press(screen.getByText('← Back to Trial Visits')); expect(screen.queryByText('Plan regular time together')).toBeNull(); expect(screen.getByText('Move to Bonus Human →')).toBeTruthy(); });
+  test('stage controls are subtle underlined links in one row and navigate both directions', () => { render(<App />); openConnection(); fireEvent.press(screen.getByText('Skip this step →')); const controls = screen.getByLabelText('Connection stage controls'); const back = within(controls).getByText('← Back to Meet & Greet'); const forward = within(controls).getByText('Move to Bonus Human →'); expect(StyleSheet.flatten(back.props.style).textDecorationLine).toBe('underline'); expect(StyleSheet.flatten(forward.props.style).textDecorationLine).toBe('underline'); fireEvent.press(back); expect(screen.getByText('Skip this step →')).toBeTruthy(); });
+  test('connection-request vocabulary avoids legacy interest terms', () => { jest.useFakeTimers(); render(<App />); openDiscover(); fireEvent.press(screen.getByLabelText('Connect')); expect(screen.getByText('Request sent')).toBeTruthy(); openTab('Connections'); fireEvent.press(screen.getByLabelText('Requests tab')); expect(screen.queryByText(/Interest sent|Interested profiles|Undo interested/)).toBeNull(); });
+  test('mock profile library has 30 unique profiles split evenly across roles', () => { expect(profileLibrary).toHaveLength(30); expect(new Set(profileLibrary.map(profile => profile.id)).size).toBe(30); expect(profileLibrary.filter(profile => profile.role === 'owner')).toHaveLength(15); expect(profileLibrary.filter(profile => profile.role === 'bonus')).toHaveLength(15); });
+  test('End Connection remains reachable through settings', () => { render(<App />); openConnection(); expect(screen.queryByText('End Connection')).toBeNull(); fireEvent.press(screen.getByLabelText('Connection settings')); expect(screen.getByText('End Connection')).toBeTruthy(); fireEvent.press(screen.getByText('End Connection')); expect(screen.getByText('Are you sure?')).toBeTruthy(); });
+  test('double-tapping a human chat message toggles heart', () => { render(<App />); openConnection(); fireEvent.press(screen.getByLabelText('Chat Connection tab')); const message = screen.getByLabelText('Message from Haley & Ari'); fireEvent.press(message); fireEvent.press(message); expect(screen.getByText('♥')).toBeTruthy(); fireEvent.press(message); fireEvent.press(message); expect(screen.queryByText('♥')).toBeNull(); });
+  test('Feed defaults to collapsed filters and composer', () => { render(<App />); openTab('Feed'); expect(screen.getByLabelText('Open Feed filters')).toBeTruthy(); expect(screen.getByLabelText('Share an update')).toBeTruthy(); expect(screen.queryByLabelText('Feed post text')).toBeNull(); expect(screen.queryByText('Post update')).toBeNull(); });
+  test('Feed filters open in a sheet and show active count', () => { render(<App />); openTab('Feed'); fireEvent.press(screen.getByLabelText('Open Feed filters')); fireEvent.press(screen.getByLabelText('Feed author Mike')); fireEvent.press(screen.getByText('Done')); expect(screen.getByText('Filters · 1')).toBeTruthy(); expect(screen.queryByText('Sweet sixteen. Zuki tolerated her birthday hat for about four seconds.')).toBeNull(); });
+  test('Feed composer progressively reveals controls and creates post', () => { render(<App />); openTab('Feed'); fireEvent.press(screen.getByLabelText('Share an update')); fireEvent.changeText(screen.getByLabelText('Feed post text'), 'Zuki enjoyed a sunny nap.'); fireEvent.press(screen.getByLabelText('Post type Milestone')); fireEvent.press(screen.getByText('Post update')); expect(screen.getByText('Zuki enjoyed a sunny nap.')).toBeTruthy(); });
+  test('Feed edits inline', () => { render(<App />); openTab('Feed'); fireEvent.press(screen.getByLabelText('Edit post We went for a short, very sniff-focused walk.')); expect(screen.getByLabelText('Edit Feed post text')).toBeTruthy(); fireEvent.changeText(screen.getByLabelText('Edit Feed post text'), 'Zuki took a slow sunset walk.'); fireEvent.press(screen.getByText('Save post')); expect(screen.getByText('Zuki took a slow sunset walk.')).toBeTruthy(); });
+  test('Feed Remove leaves a restorable placeholder', () => { render(<App />); openTab('Feed'); fireEvent.press(screen.getByLabelText('Remove post We went for a short, very sniff-focused walk.')); expect(screen.getByText('This update was removed.')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Restore post We went for a short, very sniff-focused walk.')); expect(screen.getByText('We went for a short, very sniff-focused walk.')).toBeTruthy(); });
+  test('Account prototype controls still work', () => { render(<App />); openTab('Account'); fireEvent.press(screen.getByLabelText('Edit profile completeness')); expect(screen.getByText('Lead with who you are')).toBeTruthy(); fireEvent.press(screen.getByLabelText('Go back')); fireEvent.press(screen.getByLabelText('Help')); expect(screen.getByText('Help Center is not in this prototype')).toBeTruthy(); });
 });

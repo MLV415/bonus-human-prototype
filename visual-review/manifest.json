@@ -7,161 +7,259 @@
     "width": 780,
     "height": 1688
   },
-  "generatedAt": "August 18, 2026 at 4:20 PM",
+  "generatedAt": "August 18, 2026 at 11:14 PM",
   "captures": [
     {
-      "section": "Connections",
-      "label": "Connections list - Meet & Greet",
-      "file": "screenshots/01-connections-list.png",
-      "png": "screenshots/01-connections-list.png",
-      "svg": "svg/01-connections-list.svg"
-    },
-    {
-      "section": "Connections",
-      "label": "Overview - Meet & Greet stage",
-      "file": "screenshots/02-connection-overview-meet-greet.png",
-      "png": "screenshots/02-connection-overview-meet-greet.png",
-      "svg": "svg/02-connection-overview-meet-greet.svg"
-    },
-    {
-      "section": "Connections",
-      "label": "Chat and activity history",
-      "file": "screenshots/03-connection-chat.png",
-      "png": "screenshots/03-connection-chat.png",
-      "svg": "svg/03-connection-chat.svg"
-    },
-    {
-      "section": "Connections",
-      "label": "Meet & Greet scheduling",
-      "file": "screenshots/04-meet-greet-scheduling.png",
-      "png": "screenshots/04-meet-greet-scheduling.png",
-      "svg": "svg/04-meet-greet-scheduling.svg"
-    },
-    {
-      "section": "Connections",
-      "label": "Trial Visits stage",
-      "file": "screenshots/05-connection-trial-visits.png",
-      "png": "screenshots/05-connection-trial-visits.png",
-      "svg": "svg/05-connection-trial-visits.svg"
-    },
-    {
-      "section": "Connections",
-      "label": "Regular Bonus Human scheduling options",
-      "file": "screenshots/06-connection-regular-scheduling.png",
-      "png": "screenshots/06-connection-regular-scheduling.png",
-      "svg": "svg/06-connection-regular-scheduling.svg"
+      "section": "Discover",
+      "label": "Neutral browse state",
+      "file": "screenshots/01-discover-neutral.png",
+      "png": "screenshots/01-discover-neutral.png",
+      "svg": "svg/01-discover-neutral.svg"
     },
     {
       "section": "Discover",
-      "label": "Default profile",
-      "file": "screenshots/07-discover-default.png",
-      "png": "screenshots/07-discover-default.png",
-      "svg": "svg/07-discover-default.svg"
+      "label": "Interactive swipe in progress",
+      "file": "screenshots/02a-discover-mid-swipe.png",
+      "png": "screenshots/02a-discover-mid-swipe.png",
+      "svg": "svg/02a-discover-mid-swipe.svg"
     },
     {
       "section": "Discover",
-      "label": "Another profile - Jordan",
-      "file": "screenshots/08-discover-another-profile.png",
-      "png": "screenshots/08-discover-another-profile.png",
-      "svg": "svg/08-discover-another-profile.svg"
+      "label": "Completed swipe destination - Wants to connect",
+      "file": "screenshots/02-discover-wants-to-connect.png",
+      "png": "screenshots/02-discover-wants-to-connect.png",
+      "svg": "svg/02-discover-wants-to-connect.svg"
     },
     {
       "section": "Discover",
-      "label": "Distance filter sheet",
-      "file": "screenshots/09-discover-filter-sheet.png",
-      "png": "screenshots/09-discover-filter-sheet.png",
-      "svg": "svg/09-discover-filter-sheet.svg"
+      "label": "You’re connected",
+      "file": "screenshots/03-discover-mutual-connection.png",
+      "png": "screenshots/03-discover-mutual-connection.png",
+      "svg": "svg/03-discover-mutual-connection.svg"
+    },
+    {
+      "section": "Connections",
+      "label": "Jordan Connection",
+      "file": "screenshots/03a-jordan-connection.png",
+      "png": "screenshots/03a-jordan-connection.png",
+      "svg": "svg/03a-jordan-connection.svg"
     },
     {
       "section": "Discover",
-      "label": "Applied multi-select filters",
-      "file": "screenshots/10-discover-filters-applied.png",
-      "png": "screenshots/10-discover-filters-applied.png",
-      "svg": "svg/10-discover-filters-applied.svg"
+      "label": "Queue after connected profile leaves",
+      "file": "screenshots/03a-discover-queue-after-connection.png",
+      "png": "screenshots/03a-discover-queue-after-connection.png",
+      "svg": "svg/03a-discover-queue-after-connection.svg"
     },
     {
       "section": "Discover",
-      "label": "No-results recovery",
-      "file": "screenshots/11-discover-no-results.png",
-      "png": "screenshots/11-discover-no-results.png",
-      "svg": "svg/11-discover-no-results.svg"
+      "label": "Expanded mock profile library",
+      "file": "screenshots/03b-discover-expanded-library.png",
+      "png": "screenshots/03b-discover-expanded-library.png",
+      "svg": "svg/03b-discover-expanded-library.svg"
     },
     {
-      "section": "Person Profile",
-      "label": "Detailed profile",
-      "file": "screenshots/12-person-profile-main.png",
-      "png": "screenshots/12-person-profile-main.png",
-      "svg": "svg/12-person-profile-main.svg"
+      "section": "Discover",
+      "label": "Request sent",
+      "file": "screenshots/04-discover-request-sent.png",
+      "png": "screenshots/04-discover-request-sent.png",
+      "svg": "svg/04-discover-request-sent.svg"
     },
     {
-      "section": "Person Profile",
-      "label": "Alternate photo",
-      "file": "screenshots/13-person-profile-photo.png",
-      "png": "screenshots/13-person-profile-photo.png",
-      "svg": "svg/13-person-profile-photo.svg"
+      "section": "Discover",
+      "label": "Queue after requested profile leaves",
+      "file": "screenshots/04a-discover-queue-after-request.png",
+      "png": "screenshots/04a-discover-queue-after-request.png",
+      "svg": "svg/04a-discover-queue-after-request.svg"
     },
     {
-      "section": "Person Profile",
-      "label": "Next detailed profile",
-      "file": "screenshots/14-person-profile-next.png",
-      "png": "screenshots/14-person-profile-next.png",
-      "svg": "svg/14-person-profile-next.svg"
+      "section": "Connections",
+      "label": "Wants to connect and Request sent",
+      "file": "screenshots/04b-connections-request-management.png",
+      "png": "screenshots/04b-connections-request-management.png",
+      "svg": "svg/04b-connections-request-management.svg"
+    },
+    {
+      "section": "Profiles",
+      "label": "Request profile without Previous or Next",
+      "file": "screenshots/04c-request-profile-no-browse.png",
+      "png": "screenshots/04c-request-profile-no-browse.png",
+      "svg": "svg/04c-request-profile-no-browse.svg"
+    },
+    {
+      "section": "Profiles",
+      "label": "Haley & Ari grouped profile",
+      "file": "screenshots/05-group-profile-haley-ari.png",
+      "png": "screenshots/05-group-profile-haley-ari.png",
+      "svg": "svg/05-group-profile-haley-ari.svg"
+    },
+    {
+      "section": "Profiles",
+      "label": "Haley individual profile",
+      "file": "screenshots/06-group-profile-haley.png",
+      "png": "screenshots/06-group-profile-haley.png",
+      "svg": "svg/06-group-profile-haley.svg"
+    },
+    {
+      "section": "Profiles",
+      "label": "Priya Pet Owner profile",
+      "file": "screenshots/07-priya-owner-profile.png",
+      "png": "screenshots/07-priya-owner-profile.png",
+      "svg": "svg/07-priya-owner-profile.svg"
+    },
+    {
+      "section": "Profiles",
+      "label": "Priya + Mochi pet profile",
+      "file": "screenshots/08-mochi-profile.png",
+      "png": "screenshots/08-mochi-profile.png",
+      "svg": "svg/08-mochi-profile.svg"
+    },
+    {
+      "section": "Connection",
+      "label": "Meet & Greet stage",
+      "file": "screenshots/09-stage-meet-greet.png",
+      "png": "screenshots/09-stage-meet-greet.png",
+      "svg": "svg/09-stage-meet-greet.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Schedule Meet & Greet",
+      "file": "screenshots/09a-schedule-meet-greet.png",
+      "png": "screenshots/09a-schedule-meet-greet.png",
+      "svg": "svg/09a-schedule-meet-greet.svg"
+    },
+    {
+      "section": "Connection",
+      "label": "Trial Visits - horizontal stage controls",
+      "file": "screenshots/10-stage-trial-visits.png",
+      "png": "screenshots/10-stage-trial-visits.png",
+      "svg": "svg/10-stage-trial-visits.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Schedule Trial Visit",
+      "file": "screenshots/10a-schedule-trial-visit.png",
+      "png": "screenshots/10a-schedule-trial-visit.png",
+      "svg": "svg/10a-schedule-trial-visit.svg"
+    },
+    {
+      "section": "Connection",
+      "label": "Bonus Human stage",
+      "file": "screenshots/11-stage-bonus-human.png",
+      "png": "screenshots/11-stage-bonus-human.png",
+      "svg": "svg/11-stage-bonus-human.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "One-off visit picker",
+      "file": "screenshots/12-one-off-visit-picker.png",
+      "png": "screenshots/12-one-off-visit-picker.png",
+      "svg": "svg/12-one-off-visit-picker.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Edit one-off visit",
+      "file": "screenshots/12a-one-off-visit-edit.png",
+      "png": "screenshots/12a-one-off-visit-edit.png",
+      "svg": "svg/12a-one-off-visit-edit.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Multiple independent visits",
+      "file": "screenshots/13-multiple-visit-summary.png",
+      "png": "screenshots/13-multiple-visit-summary.png",
+      "svg": "svg/13-multiple-visit-summary.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Confirmed and requested visits",
+      "file": "screenshots/14-confirmed-and-requested-visits.png",
+      "png": "screenshots/14-confirmed-and-requested-visits.png",
+      "svg": "svg/14-confirmed-and-requested-visits.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Recurring schedule editor",
+      "file": "screenshots/15-recurring-schedule-editor.png",
+      "png": "screenshots/15-recurring-schedule-editor.png",
+      "svg": "svg/15-recurring-schedule-editor.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "Recurring window - sorted abbreviated days",
+      "file": "screenshots/16-recurring-window-added.png",
+      "png": "screenshots/16-recurring-window-added.png",
+      "svg": "svg/16-recurring-window-added.svg"
+    },
+    {
+      "section": "Scheduling",
+      "label": "One-off and recurring schedule sections",
+      "file": "screenshots/16a-schedule-one-off-recurring-sections.png",
+      "png": "screenshots/16a-schedule-one-off-recurring-sections.png",
+      "svg": "svg/16a-schedule-one-off-recurring-sections.svg"
+    },
+    {
+      "section": "Connection",
+      "label": "Chat scheduling events",
+      "file": "screenshots/17-chat-scheduling-events.png",
+      "png": "screenshots/17-chat-scheduling-events.png",
+      "svg": "svg/17-chat-scheduling-events.svg"
+    },
+    {
+      "section": "Connection",
+      "label": "Hearted chat message",
+      "file": "screenshots/18-chat-hearted-message.png",
+      "png": "screenshots/18-chat-hearted-message.png",
+      "svg": "svg/18-chat-hearted-message.svg"
     },
     {
       "section": "Pets",
-      "label": "Pet Owner pet access",
-      "file": "screenshots/15-pets-owner.png",
-      "png": "screenshots/15-pets-owner.png",
-      "svg": "svg/15-pets-owner.svg"
+      "label": "Canonical Zuki profile",
+      "file": "screenshots/19-canonical-zuki-profile.png",
+      "png": "screenshots/19-canonical-zuki-profile.png",
+      "svg": "svg/19-canonical-zuki-profile.svg"
     },
     {
       "section": "Pets",
-      "label": "Zuki Profile",
-      "file": "screenshots/16-pet-profile.png",
-      "png": "screenshots/16-pet-profile.png",
-      "svg": "svg/16-pet-profile.svg"
+      "label": "Emergency information",
+      "file": "screenshots/20-zuki-emergency-info.png",
+      "png": "screenshots/20-zuki-emergency-info.png",
+      "svg": "svg/20-zuki-emergency-info.svg"
     },
     {
       "section": "Pets",
       "label": "Zuki Care Guide",
-      "file": "screenshots/17-pet-care-guide.png",
-      "png": "screenshots/17-pet-care-guide.png",
-      "svg": "svg/17-pet-care-guide.svg"
+      "file": "screenshots/21-zuki-care-guide.png",
+      "png": "screenshots/21-zuki-care-guide.png",
+      "svg": "svg/21-zuki-care-guide.svg"
     },
     {
       "section": "Feed",
-      "label": "Private pet Feed",
-      "file": "screenshots/18-feed.png",
-      "png": "screenshots/18-feed.png",
-      "svg": "svg/18-feed.svg"
+      "label": "Collapsed Feed",
+      "file": "screenshots/22-feed-collapsed.png",
+      "png": "screenshots/22-feed-collapsed.png",
+      "svg": "svg/22-feed-collapsed.svg"
     },
     {
       "section": "Feed",
-      "label": "New Feed post",
-      "file": "screenshots/19-feed-new-post.png",
-      "png": "screenshots/19-feed-new-post.png",
-      "svg": "svg/19-feed-new-post.svg"
+      "label": "Expanded composer",
+      "file": "screenshots/23-feed-composer.png",
+      "png": "screenshots/23-feed-composer.png",
+      "svg": "svg/23-feed-composer.svg"
     },
     {
-      "section": "Account",
-      "label": "Account hub",
-      "file": "screenshots/20-account-hub.png",
-      "png": "screenshots/20-account-hub.png",
-      "svg": "svg/20-account-hub.svg"
+      "section": "Feed",
+      "label": "Inline post edit",
+      "file": "screenshots/24-feed-inline-edit.png",
+      "png": "screenshots/24-feed-inline-edit.png",
+      "svg": "svg/24-feed-inline-edit.svg"
     },
     {
-      "section": "Account",
-      "label": "Mode selection",
-      "file": "screenshots/21-account-mode.png",
-      "png": "screenshots/21-account-mode.png",
-      "svg": "svg/21-account-mode.svg"
-    },
-    {
-      "section": "Account",
-      "label": "Expanded profile editing",
-      "file": "screenshots/22-profile-editing.png",
-      "png": "screenshots/22-profile-editing.png",
-      "svg": "svg/22-profile-editing.svg"
+      "section": "Feed",
+      "label": "Removed post with Restore",
+      "file": "screenshots/25-feed-removed-post.png",
+      "png": "screenshots/25-feed-removed-post.png",
+      "svg": "svg/25-feed-removed-post.svg"
     }
   ],
   "contactSheets": {

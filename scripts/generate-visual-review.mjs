@@ -245,6 +245,7 @@ async function main() {
     const reset = async () => {
       await page.goto(`${baseUrl}?visualReview=${Date.now()}`, { waitUntil: 'domcontentloaded' });
       await page.getByText('People you’re building with', { exact: true }).waitFor();
+      await page.evaluate(() => window.scrollTo(0, 0));
       await page.waitForTimeout(200);
     };
     const capture = async (file, section, label) => {
@@ -263,87 +264,132 @@ async function main() {
     };
 
     await reset();
-    await capture('01-connections-list.png', 'Connections', 'Connections list - Meet & Greet');
+    await clickTab('Discover');
+    await capture('01-discover-neutral.png', 'Discover', 'Neutral browse state');
+    const swipeCard = page.getByLabel('Discover swipe card');
+    const swipeBox = await swipeCard.boundingBox();
+    if (swipeBox) {
+      await page.mouse.move(swipeBox.x + swipeBox.width * 0.72, swipeBox.y + swipeBox.height * 0.35);
+      await page.mouse.down();
+      await page.mouse.move(swipeBox.x + swipeBox.width * 0.54, swipeBox.y + swipeBox.height * 0.35, { steps: 6 });
+      await capture('02a-discover-mid-swipe.png', 'Discover', 'Interactive swipe in progress');
+      await page.mouse.up();
+      await page.waitForTimeout(250);
+    }
+    await page.getByRole('button', { name: 'Next profile' }).click({ force: true });
+    await capture('02-discover-wants-to-connect.png', 'Discover', 'Completed swipe destination - Wants to connect');
+    await page.getByRole('button', { name: 'Connect', exact: true }).click();
+    await capture('03-discover-mutual-connection.png', 'Discover', 'You’re connected');
+    await page.getByRole('button', { name: 'Open Jordan Connection' }).click();
+    await capture('03a-jordan-connection.png', 'Connections', 'Jordan Connection');
+    await page.getByLabel('Go back').click();
+    await page.waitForTimeout(4200);
+    await capture('03a-discover-queue-after-connection.png', 'Discover', 'Queue after connected profile leaves');
+
+    await reset();
+    await clickTab('Discover');
+    await page.getByRole('button', { name: 'Next profile' }).click({ force: true });
+    await page.getByRole('button', { name: 'Next profile' }).click({ force: true });
+    await capture('03b-discover-expanded-library.png', 'Discover', 'Expanded mock profile library');
+
+    await reset();
+    await clickTab('Discover');
+    await page.getByRole('button', { name: 'Connect', exact: true }).click();
+    await capture('04-discover-request-sent.png', 'Discover', 'Request sent');
+    await page.waitForTimeout(4200);
+    await capture('04a-discover-queue-after-request.png', 'Discover', 'Queue after requested profile leaves');
+    await clickTab('Connections');
+    await page.getByRole('button', { name: 'Requests tab' }).click();
+    await capture('04b-connections-request-management.png', 'Connections', 'Wants to connect and Request sent');
+    await page.getByRole('button', { name: /Open Haley.*profile/ }).click();
+    await capture('04c-request-profile-no-browse.png', 'Profiles', 'Request profile without Previous or Next');
+    await page.getByLabel('Go back').click();
+    await page.getByRole('button', { name: 'Requests tab' }).click();
+    await page.getByRole('button', { name: 'Undo request' }).click();
+    await clickTab('Discover');
+    await page.getByRole('button', { name: /Open Haley/ }).click();
+    await capture('05-group-profile-haley-ari.png', 'Profiles', 'Haley & Ari grouped profile');
+    await page.getByRole('button', { name: 'Haley Discover profile tab' }).click();
+    await capture('06-group-profile-haley.png', 'Profiles', 'Haley individual profile');
+
+    await reset();
+    await clickTab('Account');
+    await page.getByRole('button', { name: 'Switch mode' }).click();
+    await page.getByText('Bonus Human', { exact: true }).click();
+    const modeBack = page.getByLabel('Go back');
+    if (await modeBack.count()) await modeBack.click();
+    await clickTab('Discover');
+    await page.getByRole('button', { name: 'Next profile' }).click({ force: true });
+    await page.getByRole('button', { name: /Open Priya/ }).click();
+    await capture('07-priya-owner-profile.png', 'Profiles', 'Priya Pet Owner profile');
+    await page.getByRole('button', { name: 'Mochi Discover profile tab' }).click();
+    await capture('08-mochi-profile.png', 'Profiles', 'Priya + Mochi pet profile');
+
+    await reset();
     await page.getByRole('button', { name: 'Open Haley and Ari Connection' }).click();
-    await capture('02-connection-overview-meet-greet.png', 'Connections', 'Overview - Meet & Greet stage');
+    await capture('09-stage-meet-greet.png', 'Connection', 'Meet & Greet stage');
+    await page.getByRole('button', { name: 'Schedule Meet & Greet' }).click();
+    await capture('09a-schedule-meet-greet.png', 'Scheduling', 'Schedule Meet & Greet');
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.getByRole('button', { name: 'Skip this step →' }).click();
+    await capture('10-stage-trial-visits.png', 'Connection', 'Trial Visits - horizontal stage controls');
+    await page.getByRole('button', { name: 'Schedule Trial Visit' }).click();
+    await capture('10a-schedule-trial-visit.png', 'Scheduling', 'Schedule Trial Visit');
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.getByRole('button', { name: 'Move to Bonus Human →' }).click();
+    await capture('11-stage-bonus-human.png', 'Connection', 'Bonus Human stage');
+
+    await page.getByRole('button', { name: 'Request a one-off visit' }).click();
+    await capture('12-one-off-visit-picker.png', 'Scheduling', 'One-off visit picker');
+    await page.getByRole('button', { name: 'Send request' }).click();
+    await page.getByRole('button', { name: 'Edit / reschedule' }).click();
+    await capture('12a-one-off-visit-edit.png', 'Scheduling', 'Edit one-off visit');
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.getByRole('button', { name: 'Request a one-off visit' }).click();
+    await page.getByRole('button', { name: 'Send request' }).click();
+    await scrollToText('Time together, at a glance');
+    await capture('13-multiple-visit-summary.png', 'Scheduling', 'Multiple independent visits');
+    await page.getByRole('button', { name: 'Confirm as Mike' }).first().click();
+    await scrollToText('Time together, at a glance');
+    await capture('14-confirmed-and-requested-visits.png', 'Scheduling', 'Confirmed and requested visits');
+    await page.getByRole('button', { name: 'Manage recurring schedule' }).click();
+    await scrollToText('DAYS');
+    await capture('15-recurring-schedule-editor.png', 'Scheduling', 'Recurring schedule editor');
+    await page.getByRole('button', { name: 'Recurring Wednesday' }).click();
+    await page.getByRole('button', { name: 'Recurring Tuesday' }).click();
+    await page.getByRole('button', { name: 'Add recurring window' }).click();
+    await scrollToText('Recurring · Tue, Wed, Thu');
+    await capture('16-recurring-window-added.png', 'Scheduling', 'Recurring window - sorted abbreviated days');
+    await page.getByRole('button', { name: 'Done', exact: true }).click();
+    await scrollToText('RECURRING SCHEDULE');
+    await capture('16a-schedule-one-off-recurring-sections.png', 'Scheduling', 'One-off and recurring schedule sections');
     await page.getByRole('button', { name: 'Chat Connection tab' }).click();
-    await capture('03-connection-chat.png', 'Connections', 'Chat and activity history');
-
-    await reset();
-    await page.getByRole('button', { name: 'Open Haley and Ari Connection' }).click();
-    await page.getByText('Schedule Meet & Greet', { exact: true }).click();
-    await capture('04-meet-greet-scheduling.png', 'Connections', 'Meet & Greet scheduling');
-
-    await reset();
-    await page.getByRole('button', { name: 'Open Haley and Ari Connection' }).click();
-    await page.getByText('Skip to Trial Visits', { exact: true }).click();
-    await capture('05-connection-trial-visits.png', 'Connections', 'Trial Visits stage');
-    await page.getByText('Move to Regular Bonus Human', { exact: true }).click();
-    await capture('06-connection-regular-scheduling.png', 'Connections', 'Regular Bonus Human scheduling options');
-
-    await reset();
-    await clickTab('Discover');
-    await capture('07-discover-default.png', 'Discover', 'Default profile');
-    await page.getByText('Next →', { exact: true }).click();
-    await capture('08-discover-another-profile.png', 'Discover', 'Another profile - Jordan');
-
-    await reset();
-    await clickTab('Discover');
-    await page.getByRole('button', { name: /Distance · 10 mi filter/ }).click();
-    await capture('09-discover-filter-sheet.png', 'Discover', 'Distance filter sheet');
-    await page.getByText('Done', { exact: true }).click();
-    await page.getByRole('button', { name: /^Schedule filter$/ }).click();
-    await page.getByRole('button', { name: 'Thursday PM' }).click();
-    await page.getByRole('button', { name: 'Saturday PM' }).click();
-    await page.getByText('Done', { exact: true }).click();
-    await page.getByRole('button', { name: /^Experience filter$/ }).click();
-    await page.getByRole('button', { name: 'Senior dog care' }).click();
-    await page.getByRole('button', { name: 'Medication / pills' }).click();
-    await page.getByText('Done', { exact: true }).click();
-    await capture('10-discover-filters-applied.png', 'Discover', 'Applied multi-select filters');
-
-    await reset();
-    await clickTab('Discover');
-    await page.getByRole('button', { name: /^Home filter$/ }).click();
-    await page.getByRole('button', { name: 'Has dogs' }).click();
-    await page.getByText('Done', { exact: true }).click();
-    await capture('11-discover-no-results.png', 'Discover', 'No-results recovery');
-
-    await reset();
-    await clickTab('Discover');
-    await page.getByText('View profile', { exact: true }).click();
-    await capture('12-person-profile-main.png', 'Person Profile', 'Detailed profile');
-    await page.getByRole('button', { name: 'Next photo' }).click();
-    await capture('13-person-profile-photo.png', 'Person Profile', 'Alternate photo');
-    await scrollToText('Next →');
-    await page.getByText('Next →', { exact: true }).click();
-    await capture('14-person-profile-next.png', 'Person Profile', 'Next detailed profile');
+    await capture('17-chat-scheduling-events.png', 'Connection', 'Chat scheduling events');
+    const mikeMessage = page.getByRole('button', { name: 'Message from Mike' }).first();
+    await mikeMessage.dblclick({ delay: 100 });
+    await capture('18-chat-hearted-message.png', 'Connection', 'Hearted chat message');
 
     await reset();
     await clickTab('Pets');
-    await capture('15-pets-owner.png', 'Pets', 'Pet Owner pet access');
-    await page.getByText('Zuki', { exact: true }).click();
-    await capture('16-pet-profile.png', 'Pets', 'Zuki Profile');
-    await page.getByText('Care Guide', { exact: true }).click();
-    await capture('17-pet-care-guide.png', 'Pets', 'Zuki Care Guide');
+    await page.getByRole('button', { name: 'Open Zuki Profile' }).click();
+    await capture('19-canonical-zuki-profile.png', 'Pets', 'Canonical Zuki profile');
+    await page.getByRole('button', { name: 'Open Zuki emergency information' }).click();
+    await capture('20-zuki-emergency-info.png', 'Pets', 'Emergency information');
+    await page.getByLabel('Close emergency information').click();
+    await page.getByRole('button', { name: 'Care Guide pet tab' }).click();
+    await capture('21-zuki-care-guide.png', 'Pets', 'Zuki Care Guide');
 
     await reset();
     await clickTab('Feed');
-    await capture('18-feed.png', 'Feed', 'Private pet Feed');
-    await page.getByPlaceholder('Share a Zuki update…').fill('Zuki settled in with her tan blanket.');
-    await page.getByText('↑', { exact: true }).click();
-    await capture('19-feed-new-post.png', 'Feed', 'New Feed post');
-
-    await reset();
-    await page.getByLabel('Open account').click();
-    await capture('20-account-hub.png', 'Account', 'Account hub');
-    await page.getByRole('button', { name: 'Mode' }).click();
-    await capture('21-account-mode.png', 'Account', 'Mode selection');
-
-    await reset();
-    await page.getByLabel('Open account').click();
-    await page.getByRole('button', { name: 'Edit profile' }).click();
-    await capture('22-profile-editing.png', 'Account', 'Expanded profile editing');
+    await capture('22-feed-collapsed.png', 'Feed', 'Collapsed Feed');
+    await page.getByRole('button', { name: 'Share an update' }).click();
+    await capture('23-feed-composer.png', 'Feed', 'Expanded composer');
+    await page.getByRole('button', { name: 'Cancel', exact: true }).click();
+    await page.getByRole('button', { name: /Edit post We went for a short/ }).click();
+    await capture('24-feed-inline-edit.png', 'Feed', 'Inline post edit');
+    await page.getByRole('button', { name: 'Cancel edit' }).click();
+    await page.getByRole('button', { name: /Remove post We went for a short/ }).click();
+    await capture('25-feed-removed-post.png', 'Feed', 'Removed post with Restore');
 
     await buildReviewArtifacts(browser);
     await context.close();

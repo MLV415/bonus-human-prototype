@@ -1,149 +1,93 @@
 # Bonus Human Design System
 
-This documents the visual and interaction language implemented in the Expo prototype. Preserve the warm, calm identity and update this file after substantial visual changes.
+Warm, trustworthy, adult, pet-first, and calm. Avoid gig-marketplace urgency, dating-game signals, corporate filler, and excessive cuteness.
 
-## Visual character and palette
+## Palette
 
-Warm, trustworthy, modern, adult, and pet-centered without marketplace urgency or excessive cuteness.
-
-| Token | Value | Primary use |
+| Token | Value | Use |
 | --- | --- | --- |
-| Paper | `#FBF8F2` | App background, sheets |
-| White | `#FFFFFF` | Object cards, inputs, selected segments, navigation |
+| Paper | `#FBF8F2` | App background and sheets |
+| White | `#FFFFFF` | Object cards, inputs, selected surfaces |
 | Ink | `#27332D` | Titles and primary copy |
 | Muted | `#667169` | Body, metadata, helper text |
 | Sage | `#507363` | Primary actions, active states, links |
-| Sage light | `#E8F0EA` | Secondary/selected/confirmed surfaces |
-| Clay | `#C86F52` | Warm emphasis, reactions, destructive actions |
-| Clay light | `#F7E9E2` | Warm tags and avatar tint |
-| Gold | `#E3B562` | Progress connectors and checklist emphasis |
+| Sage light | `#E8F0EA` | Secondary, selected, confirmed surfaces |
+| Clay | `#C86F52` | Warm emphasis, active underline, destructive actions |
+| Clay light | `#F7E9E2` | Warm tags and Emergency background |
+| Gold | `#E3B562` | Stage connectors and checklist emphasis |
 | Navy | `#314B5A` | Care checklist |
-| Line | `#E6E3DC` | Borders and dividers |
+| Line | `#E6E3DC` | Dividers and borders |
 
-Selected/active uses sage/white or sage-light/sage. Confirmed uses sage. Pending uses warm neutral/gold. Destructive uses clay/white. Disabled controls use 45% opacity.
+## Typography and brand
 
-## Typography
+- H1/screen title: 30/35, 800, ink. H2: 23/28, 800. H3/object: 17/22, 800.
+- Body: 14/21 muted. Bio: 15–16/22–24 ink. Metadata: 10–13 muted.
+- Eyebrows: 11/800 clay, uppercase, tracked. They add context rather than repeat the title.
+- Screen titles and actions use sentence case. Structural terms retain canonical capitalization.
+- The lowercase `bonus human` wordmark is 13/800 sage and sits quietly at the top of top-level scroll content. It is branding, not a button or toolbar.
 
-Platform system sans-serif, no custom font.
+## Navigation and headers
 
-| Role | Treatment |
-| --- | --- |
-| H1 / screen title | 30/35, 800, ink |
-| H2 / section title | 23/28, 800, ink |
-| H3 / object title | 17/22, 800, ink |
-| Discover name | 25, 800, ink |
-| Body | 14/21, muted |
-| Bio/emphasis | 15–16/22–24, ink |
-| Eyebrow | 11, 800, clay, uppercase, tracked |
-| Metadata/helper | 10–13, muted |
+Bottom navigation is **Discover, Connections, Pets, Feed, Account**, using 22px Ionicons and a clay active dot. Top-level screens do not use a global toolbar. Their order is: wordmark → page heading/context → subtabs when present → content.
 
-Use sentence case for titles/actions. Uppercase is reserved for eyebrows, compact statuses, and day abbreviations.
+Detail screens use a compact back header. Back always returns to the immediate prior screen. Long nested content keeps key subtabs outside the scrolling body.
 
-## Buttons and controls
+## Subtabs
 
-- **Primary:** sage, white 14/800 text, 48px minimum, 14px radius.
-- **Secondary:** sage light/sage for reversible alternatives.
-- **Outline:** white, 1.5px sage border, sage text.
-- **Destructive:** clay/white only for confirmed destructive actions.
-- **Small:** 42px minimum. **Pressed:** 76% opacity.
-- Icon controls require clear accessibility labels and 32–44px targets.
-- Inputs use white, 1px line border, 12px radius, 44px minimum.
-- Switches use gray off, sage on, white knob.
+Use one underline/navigation treatment for:
 
-## Cards and hierarchy
+- Connected / Requests / Passed
+- Overview / Chat
+- Profile / Care Guide
+- Mike / Zuki
 
-Cards represent objects or actionable units: Discover people, pets, Connections, Feed posts, upcoming/requested events, and the actionable Care checklist. Use white, line borders, 14–24px radii, and restrained elevation only on the primary Discover card.
+Subtabs have a line baseline, 46px minimum height, muted inactive labels, ink active labels, and a 3px clay active underline. Do not use large segmented-toggle boxes for navigation.
 
-Section introductions, stage explanations, Care subsections, metadata, settings, and Account groups use headings, spacing, divider rows, and flat grouped surfaces instead of nested cards.
+## Buttons and states
 
-## Tags, filters, and staged editing
+- Primary: sage/white, 48px minimum, 14px radius.
+- Secondary: sage-light/sage. Outline: white with sage border. Destructive: clay/white.
+- **Connect** includes a link/people motif. Pressed state scales to 97% with slight opacity; Request sent and You’re connected use a calm confirmed-green state.
+- Discover decisions stay in a fixed bar above bottom navigation. After an action, the card advances immediately and a dark, non-blocking banner sits above the decision area for four seconds. It pairs **Request sent** or **Not now** with **Undo**, and **You’re connected** with **Open connection**.
+- **Not now** is secondary and reversible. **Reconsider pass** in Connections restores the profile to Discover. Avoid hearts for the primary connection action.
+- Text actions are used for low-emphasis reversible controls such as stage movement, Edit, and Remove.
+- Disabled controls use 45% opacity. Visible controls must act, navigate, or explain the prototype limit.
 
-- Informational tags: sage light/sage. Warm tags: clay light/clay.
-- Discover filter categories form one horizontal row: Distance, Schedule, Experience, Home.
-- Category chips show applied state only, such as `Distance · 10 mi` or `Schedule · 4`.
-- Tapping opens a bottom sheet with a dim scrim, 24px top corners, handle, close/cancel, Clear, and Done.
-- Changes inside the sheet are temporary. **Done applies**; close, scrim, or system dismissal **discards**.
-- Distance uses a stable finger-tracking 1–100 mile slider.
-- Schedule uses independent weekday AM/PM choices plus reassurance that specifics come after connecting.
-- Schedule, Experience, and Home are multi-select.
+## Cards and photos
 
-## Connection patterns
+Cards represent objects or actionable units: Discover profiles, pets, Connections, Feed posts, and requested visits. Sections use typography, spacing, and dividers rather than nested cards.
 
-- Connection list cards show participants, relevant pet, current stage, and recent context.
-- Opening a card lands on **Overview**, with **Chat** one tap away in a two-option segment.
-- Overview uses tappable participant/pet portraits, a flat stage timeline, one prominent stage-aware next action, event cards, profile/Care links, and a quiet End Connection action.
-- Stages are exactly **Meet & Greet → Trial Visits → Regular Bonus Human**.
-- Skipping and backtracking use secondary/outline actions and remain reversible.
-- Scheduling uses a bottom sheet with Date, Start time, End time, Cancel, and Send request.
-- Chat activity is centered on a sage-light system bubble; human messages retain left/right chat bubbles.
-- Requested events expose Confirm, Decline, and Reschedule. Confirmed events use sage status styling.
-- End Connection uses a centered confirmation dialog, optional reason chips, separate serious-problem link, and clay destructive confirmation.
+Discover images are 300px high; person details 330px; pet heroes 300px; Feed images 245px. Use cover crops and keep faces in the central safe area. Photo tap advances; a white strip with subtle dots shows position. The Discover card body opens the profile; horizontal swipe visibly tracks the finger, reveals an adjacent card whose gallery stays mounted through promotion, animates out after threshold, and springs back at boundaries. Image and profile metadata transition as one unit. Photo interactions never trigger profile navigation or a connection request.
 
-## Navigation
+## Filters and profile tags
 
-Four persistent bottom destinations, in order:
+Discover categories form a horizontal rail: Distance, Schedule, Visit type, Experience, Home. The partially visible next chip communicates scrolling; do not add a nonfunctional arrow. Tapping opens a bottom sheet. Done is the only visible apply/close action; the scrim discards staged changes. Do not add a redundant circular X.
 
-| Destination | Inactive | Active |
-| --- | --- | --- |
-| Discover | `search-outline` | `search` |
-| Connections | `people-outline` | `people` |
-| Pets | `paw-outline` | `paw` |
-| Feed | `images-outline` | `images` |
+- Distance uses the 1–100 mile slider and **Reset** to 10 miles.
+- Availability combines All AM/All PM/Weekdays/Weekends/Clear all with individual weekday cells.
+- Home requirements use single-choice Any states and only meaningful constraints, never opposing chip sprawl.
+- Filterable profile tags use sage-light pills. Informational tags use the same quiet visual but appear under a named contextual group. Derived values are plain metadata or summaries, not editable chips.
 
-Ionicons are 22px; inactive is muted, active is sage with a clay position dot. Account is accessed from the top-right avatar, not a bottom tab. Back appears at top left on full-screen details. Existing users may land on Connections; new users may land on Discover.
+## Care, emergency, and status
 
-## Account and Pets patterns
+The Care checklist is navy with gold completed checkboxes and one task per row. Reference instructions are flat divider rows. Emergency is a compact, absolutely positioned clay action with a medical icon plus the word **Emergency**; it floats above the lower edge with matching content inset and has no full-width background, dock, or divider. The Emergency sheet prioritizes contact, veterinarian, and critical notes.
 
-- Account first opens a hub of divider rows: Mode, Edit profile, Manage pets (Pet Owner only), Settings, Help, About.
-- Development tools never appear in the user-facing Account experience.
-- Expanded profile editing reuses the same Schedule, Experience, and Home chip patterns used by Discover.
-- Pets shows one role-specific group at a time.
-- Pet detail uses **Profile | Care Guide**. Connection management never appears as a pet sub-tab.
+Connection stage labels are 11/14, 700, with sage active nodes and gold/gray connectors. The sequence is Meet & Greet → Trial Visits → Bonus Human. Backward and forward/skip controls are subtle underlined text links in one compact horizontal row immediately below the diagram: backward on the left, forward on the right. Both remain secondary to the stage-specific scheduling action. Connection headers name the connected Bonus Human without appending the owner’s pet; the participant diagram carries pet context.
 
-## Photos
+## Feed and forms
 
-- Discover: full card width × 300px. Person detail: full width × 330px. Pet hero: × 300px, 22px radius. Feed: × 245px, 13px radius.
-- Use cover cropping and keep faces inside the central safe area.
-- Never place role text or navigation arrows over faces.
-- Tap advances photos; small position dots sit in a white strip below.
+Feed filters for Pet, Connection, and Author live behind a compact Filters control with an active count. Every card displays author, pet, Connection, category, and time. The composer starts collapsed and progressively reveals category and Connection-context controls. Edit is inline. Remove replaces the current user’s card with a muted Restore placeholder.
 
-## Empty states
+Inputs are white with a 1px line border, 12px radius, and 44px minimum. Scheduling sheets are scrollable with fixed, safe-area-aware action footers. Dates and times use platform-appropriate pickers rather than free text; on iOS, the visible field contains one native compact control and never inserts a duplicate picker beneath it. Schedule summaries use labeled **Upcoming visits** and **Recurring schedule** groups with similarly weighted compact cards. Recurring day summaries use Mon–Sun calendar order and abbreviations. Edit Profile grouping order is Photos → Profile basics → Location/Connection hope → Availability → Visit types → Experience → Home/Household → Story prompts.
 
-White bordered 18px-radius object, concise H3, one explanation, and immediate recovery. Name the actual cause. Filter empty states offer Increase distance and Clear filters.
+## Terminology and voice
 
-## Spacing and radius
+Canonical structural terms: **Connect, Request sent, Undo request, Wants to connect, You’re connected, Connected, Connection, Pet Owner, Bonus Human, Meet & Greet, Trial Visits, Profile, Care Guide, Feed, Account**. The final stage is **Bonus Human**, never “Regular Bonus Human.” Use **Bonus Humans** only as the plural role label for multiple people. Do not use Interest sent, Interested, Interested profiles, or Undo interested for connection requests. Avoid Match, Relationship, Association, and Pet Circle as competing objects. Use plain contextual wording such as “Zuki’s people.”
 
-- Screen horizontal padding: 20px.
-- Section spacing: generally 26px before, 14px after.
-- Object padding: 12–18px; compact gaps 7–10px; action gap 12px.
-- Bottom breathing room: 34px.
-- Pills/chips: 99px radius; inputs/compact controls: 10–14px; object cards: 14–18px; heroes: 22–24px.
+System copy should be warm, relationship-oriented, pet-first, neighborly, concise, trustworthy, and non-transactional. Use `&` within same-type groups and `+` between human and pet sides.
 
-## Interaction states
+## Spacing and constraints
 
-- Decision: Interested/Passed changes to Undo/Reconsider and persists during detailed Previous/Next browsing.
-- Photo: tap advances and wraps.
-- Feed reaction: outline heart becomes clay filled and reverses.
-- Active tab: filled sage Ionicon, sage label, clay dot.
-- Connection Overview and Chat read/write one shared mocked state.
-- Meaningful Connection changes append activity to Chat.
+Screen horizontal padding: 20px. Section spacing: about 26px before/14px after. Object padding: 12–18px. Bottom breathing room: 34px. Pills are fully rounded; inputs/compact controls 10–14px; object cards 14–18px; heroes 22–24px.
 
-## Terminology
-
-- **Connection** is the only long-lived structural relationship concept.
-- **Connection stage** is Meet & Greet, Trial Visits, or Regular Bonus Human.
-- **Interested** and **Passed** are reversible pre-Connection decisions.
-- **Pet Owner**, **Bonus Human**, **Availability**, **Visit**, **Care Guide**, and **Feed** use the meanings in `PRODUCT_DESIGN.md`.
-- **Pet Circle** may appear only as occasional warm brand copy, not a status, object, or navigation label.
-- Avoid Match/Matches, Association, and structural uses of Relationship.
-
-## Known constraints
-
-- In-content Unicode symbols can vary by platform; bottom navigation uses Ionicons.
-- System-font metrics vary slightly across platforms.
-- Date/time inputs are intentionally lightweight prototype fields.
-- Physical-iPhone touch, safe-area, keyboard, and screen-reader behavior require manual review.
-
-## Maintenance rule
-
-Update this document after changes to reusable visuals, navigation, components, states, terminology, or interaction patterns. Regenerate the visual-review package after substantial UI changes.
+System font metrics and physical-iPhone safe areas, keyboard, gestures, and screen-reader behavior require device review. Update this document after substantial reusable visual or interaction changes.
