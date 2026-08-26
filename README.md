@@ -1,6 +1,8 @@
 # Bonus Human
 
-Bonus Human is an AI-assisted working prototype for building pet-sharing relationships between pet owners and people who want animals in their lives without taking on full-time ownership. It explores ongoing relationships rather than paid pet care.
+A new way to build pet-sharing relationships in your community.
+
+I built Bonus Human as an AI-assisted working prototype for ongoing pet-sharing relationships, not paid pet care.
 
 <p align="center">
   <img src="visual-review/screenshots/01-discover-neutral.png" alt="Bonus Human Discover screen showing Haley and Ari with compatibility details and profile actions" width="320">
@@ -8,49 +10,95 @@ Bonus Human is an AI-assisted working prototype for building pet-sharing relatio
 
 ## Why this exists
 
-When Zuki turned 16, it was getting harder to find the care she needed. Her physical and mental needs were changing, and I wanted to find a way to mirror the special care she got from me while still finding the freedom to live my own life.
+When Zuki turned 16, it was getting harder to find the care she needed.
+
+Her physical and mental needs were changing: she had trouble being alone, and struggled with other dogs at our regular sitter. I wanted to mirror the special care she got from me, while still finding the freedom to live my own life.
 
 As I talked to people in my community, I realized many of them were excited about the idea of a part-time pet. They loved animals, but couldn't make the financial, daily, or long-term commitment of ownership.
 
-I made posts on Facebook and Nextdoor, put up flyers, and interviewed over a dozen people. Through those conversations, I kept coming back to the same questions: how could I make it easier to connect with people nearby, manage scheduling and care details, build trust with someone new, and ultimately find Zuki a “bonus human”?
+**The lightbulb went off! What if we just shared?**
+
+I made posts on Facebook and Nextdoor, put up flyers, and interviewed over a dozen people. Through those conversations, I kept coming back to the same questions:
+
+- How could I make it easier to connect with people nearby?
+- How could we manage scheduling and other details?
+- How would we build trust with someone new?
+
+**How could I find Zuki a "bonus human"?**
 
 ## Product model
 
-- People discover nearby Pet Owners or Bonus Humans using compatibility details and filters.
-- Sending a request records one person's intent; mutual requests create a connection.
+- Users connect based on unique preferences.
+- Interactions are guided as the relationship grows.
+- Everyone involved sees details and updates over time.
+- Mutual requests create a connection.
 - One connection persists as trust progresses through **Meet & Greet → Trial Visit → Bonus Human**.
-- Messaging, scheduling, care information, and pet updates stay in the pet and connection context.
 - The intended outcome is an ongoing pet-sharing relationship, not a one-time transaction.
 
 ## Prototype flow
 
 **Discover → mutual request → connection → Meet & Greet → Trial Visit → Bonus Human**
 
-Discover includes Pet Owner and Bonus Human modes, profile browsing, compatibility filters, reversible requests, and reversible **Not now** choices. Once interest is mutual, the connection provides a shared place to coordinate and advance through the trust stages.
+### Discover
+
+**Compatibility before commitment.**
+
+- Look for new connections by reviewing profiles nearby.
+- Filter using distance, schedule, experience, and environment.
+- Mutual requests create a connection.
 
 <p align="center">
   <img src="visual-review/screenshots/05-group-profile-haley-ari.png" alt="Haley and Ari’s profile showing compatibility, availability, and pet-care experience" width="320">
 </p>
 <p align="center"><em>Discover nearby people based on compatibility.</em></p>
 
+### Connection
+
+**Building trust over time**
+
+- Meet & Greet: get to know each other.
+- Trial Visit: try some time together.
+- Bonus Human: a new type of pet-sharing relationship.
+
 ## Core experiences
 
-- **Scheduling:** recurring schedules, one-off visits, and a compact current-week view.
-- **Care:** routine, food, medication, veterinary details, and emergency information stay easy to find.
-- **Pet Feed + Chat:** photos and updates live in the Pet Feed, while Pet Chat handles coordination and details.
+### Scheduling
+
+**Plan time together.**
+
+- Get into a rhythm with recurring visits.
+- Or, schedule a one-off when things line up.
+- View the plan for the current week.
 
 <p align="center">
   <img src="visual-review/screenshots/16a-schedule-one-off-recurring-sections.png" alt="Haley and Ari’s connection schedule showing upcoming visits and recurring time together" width="320">
 </p>
 <p align="center"><em>Scheduling supports recurring and one-off visits.</em></p>
 
+### Care
+
+**Critical information, easy to scan.**
+
+- Keep track of their daily routine.
+- Detailed instructions for food and medicine.
+- Easily access veterinary and emergency info.
+
+### Pet Feed + Chat
+
+**Stay connected between visits**
+
+- Share photos and updates in the Pet Feed.
+- Work out the details in the Pet Chat.
+
 ## Implementation
+
+### Prototyping to drive decision making
 
 I used React Native, Expo SDK 54, React, and mocked local state to turn the product decisions into a working prototype.
 
 I used OpenAI Codex for AI-assisted implementation while I directed the product model, scope, UX decisions, review cycles, and quality bar.
 
-Validation includes 42 automated regression tests with Jest and React Native Testing Library, repeated physical-iPhone QA in Expo Go, and a repeatable Playwright-based visual-review workflow that produces consistent PNG, SVG, contact-sheet, and PDF artifacts.
+Validation includes 42 automated regression tests with Jest and React Native Testing Library, repeated physical-iPhone QA in Expo Go, and a repeatable Playwright-based visual-review workflow that produces consistent review artifacts.
 
 The current product and visual decisions are documented in [PRODUCT_DESIGN.md](PRODUCT_DESIGN.md), [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), and [PRODUCT_BACKLOG.md](PRODUCT_BACKLOG.md).
 
