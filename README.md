@@ -81,3 +81,5 @@ npm test
 ```
 
 On Windows PowerShell, use `npm.cmd test` and `npm.cmd run visual-review`.
+
+© 2026 Mike Vais. All rights reserved.
