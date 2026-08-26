@@ -2,6 +2,10 @@
 
 Bonus Human is an AI-assisted working prototype for building pet-sharing relationships between Pet Owners and people who want animals in their lives without taking on full-time ownership. It explores ongoing relationships rather than paid pet care.
 
+<p align="center">
+  <img src="visual-review/screenshots/01-discover-neutral.png" alt="Bonus Human Discover screen showing Haley and Ari with compatibility details and profile actions" width="320">
+</p>
+
 ## Why this exists
 
 As Zuki grew older, her changing care needs made personalized, consistent support more important than a typical sitting arrangement could always provide. At the same time, Mike met people nearby who liked the idea of a part-time pet. He tested that premise manually through Facebook, Nextdoor, flyers, and conversations with more than a dozen people.
@@ -22,11 +26,21 @@ Those conversations shaped the product question: how might nearby people find a 
 
 Discover includes Pet Owner and Bonus Human modes, profile browsing, compatibility filters, reversible requests, and reversible **Not now** choices. Once interest is mutual, the connection provides a shared place to coordinate and advance through the trust stages.
 
+<p align="center">
+  <img src="visual-review/screenshots/05-group-profile-haley-ari.png" alt="Haley and Ari’s profile showing compatibility, availability, and pet-care experience" width="320">
+</p>
+<p align="center"><em>Discover nearby people based on compatibility.</em></p>
+
 ## Core experiences
 
 - **Scheduling:** recurring schedules, one-off visits, and a compact current-week view.
 - **Care:** Zuki’s routine, food, medication, veterinary details, and emergency information.
 - **Pet Feed + Chat:** a feed for private pet-centered photos and updates, plus chat for coordination and details.
+
+<p align="center">
+  <img src="visual-review/screenshots/16a-schedule-one-off-recurring-sections.png" alt="Haley and Ari’s connection schedule showing upcoming visits and recurring time together" width="320">
+</p>
+<p align="center"><em>Scheduling supports recurring and one-off visits.</em></p>
 
 ## Implementation
 
