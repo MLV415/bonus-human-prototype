@@ -1,58 +1,61 @@
 # Bonus Human
 
-Bonus Human is an AI-assisted mobile product prototype exploring ongoing, trusted pet-sharing relationships between Pet Owners and people who want meaningful pet companionship without full ownership.
+Bonus Human is an AI-assisted working prototype for building pet-sharing relationships between Pet Owners and people who want animals in their lives without taking on full-time ownership. It explores ongoing relationships rather than paid pet care.
 
-## The problem
+## Why this exists
 
-Pet Owners sometimes need a broader circle of trusted people, while many animal lovers want a real bond with a pet but cannot or do not want to own one. Existing pet-care products usually frame time with a pet as a paid transaction. Bonus Human instead explores a lasting, mutually valuable relationship in which the Pet Owner remains responsible and a Bonus Human becomes one of the pet’s familiar people.
+As Zuki grew older, her changing care needs made personalized, consistent support more important than a typical sitting arrangement could always provide. At the same time, Mike met people nearby who liked the idea of a part-time pet. He tested that premise manually through Facebook, Nextdoor, flyers, and conversations with more than a dozen people.
 
-## The product
+Those conversations shaped the product question: how might nearby people find a compatible fit, build trust, coordinate care, and form an ongoing “bonus human” relationship?
 
-The Expo prototype demonstrates:
+## Product model
 
-- Discover browsing and filters across Pet Owner and Bonus Human modes
-- connection requests, reversible Not now choices, and mutual Connections
-- Meet & Greet → Trial Visits → Bonus Human progression
-- one-off visits plus recurring schedules
-- Pet Profiles, operational Care Guides, and Emergency access
-- a private Feed of pet-centered updates
+- People discover nearby Pet Owners or Bonus Humans using compatibility details and filters.
+- Sending a request records one person’s intent; mutual requests create a connection.
+- One connection persists as trust progresses through **Meet & Greet → Trial Visit → Bonus Human**.
+- Messaging, scheduling, care information, and pet updates stay in the pet and connection context.
+- The intended outcome is an ongoing pet-sharing relationship, not a one-time transaction.
 
-## My role
+## Prototype flow
 
-I independently led the product concept, strategy, workflow design, UX iteration, prototype scope, and quality bar. The project demonstrates product judgment, hands-on prototyping, AI-assisted implementation, device QA, regression testing, and deliberate scope management.
+**Discover → mutual request → connection → Meet & Greet → Trial Visit → Bonus Human**
 
-## How I built it
+Discover includes Pet Owner and Bonus Human modes, profile browsing, compatibility filters, reversible requests, and reversible **Not now** choices. Once interest is mutual, the connection provides a shared place to coordinate and advance through the trust stages.
 
-I translated the product model into focused mobile flows, implemented them with OpenAI Codex, and repeatedly evaluated the result in Expo Go on a physical iPhone. Each review cycle combined observed device behavior, automated regression tests, and a Playwright-based visual-review workflow that captures consistent mobile states for comparison. The Git history records the iterative decisions and fixes.
+## Core experiences
 
-## Selected product decisions
+- **Scheduling:** recurring schedules, one-off visits, and a compact current-week view.
+- **Care:** Zuki’s routine, food, medication, veterinary details, and emergency information.
+- **Pet Feed + Chat:** a feed for private pet-centered photos and updates, plus chat for coordination and details.
 
-- **One long-lived Connection:** avoided separate pre-Connection and active-relationship objects that would fragment the mental model.
-- **Two scheduling rhythms:** separated one-off visits from recurring windows so occasional and ongoing time remain understandable.
-- **Role modes remain scaffolding:** Pet Owner and Bonus Human modes are intentional foundations for future differentiated experiences, not another Discover filter.
-- **Care stays close to the pet:** Pet Profiles link directly to Care Guides and Emergency information.
-- **Scope stays explicit:** lower-priority redesigns are documented in the backlog instead of being rushed into the prototype.
+## Implementation
 
-## Prototype scope
+The prototype uses React Native, Expo SDK 54, React, and mocked local state. OpenAI Codex supported the implementation workflow while Mike directed the product model, scope, UX decisions, review cycles, and quality bar.
 
-This is a portfolio prototype with mocked, local data. It intentionally has no production backend, payments, real authentication, commercial deployment, live messaging, or location tracking. State resets when the app reloads.
+Validation includes 42 automated regression tests with Jest and React Native Testing Library, repeated physical-iPhone QA in Expo Go, and a repeatable Playwright-based visual-review workflow that produces consistent PNG, SVG, contact-sheet, and PDF artifacts.
 
-## Tech
+The current product and visual decisions are documented in [PRODUCT_DESIGN.md](PRODUCT_DESIGN.md), [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), and [PRODUCT_BACKLOG.md](PRODUCT_BACKLOG.md).
 
-React Native, Expo SDK 54, React, Jest, React Native Testing Library, and Playwright-based visual-review tooling.
+## What changed through testing
 
-## Quality / validation
+- A separate Relationship object was removed in favor of one long-lived connection whose stage changes over time.
+- One-off visits were separated from recurring schedules so occasional and ongoing time remain distinct.
+- Previous/Next profile browsing was limited to Discover; known-profile and established-connection contexts use scoped navigation.
+- Request and lifecycle language was clarified so one request remains pending and only mutual intent creates a connection.
 
-- 42 automated regression tests covering core product behavior
-- repeated physical-iPhone QA in Expo Go
-- reproducible 390 × 844 visual-review captures in PNG, SVG, contact-sheet, and PDF formats
-- iterative Git history documenting product and implementation changes
+## Deliberate boundaries
 
-## Product backlog
+This portfolio prototype deliberately excludes:
 
-[PRODUCT_BACKLOG.md](PRODUCT_BACKLOG.md) captures product and UX opportunities deliberately deferred from this prototype freeze.
+- production authentication and backend services
+- payments
+- a full calendar visualization
+- scheduling conflict detection
+- full pet-record creation and editing
 
-## Run locally
+It also does not provide production messaging, notifications, or location tracking. Data is mocked locally and state resets when the app reloads.
+
+## Running locally
 
 Install Node.js 20.19 or newer and Expo Go, then run:
 
@@ -63,16 +66,18 @@ npx expo start --clear
 
 On Windows PowerShell, use `npm.cmd install` and `npx.cmd expo start --clear` if script aliases are unavailable. Scan the QR code with Expo Go or press `w` for the web preview.
 
-Run tests:
-
-```bash
-npm test
-```
-
-Regenerate the visual review:
+Regenerate the visual-review artifacts with:
 
 ```bash
 npm run visual-review
 ```
 
-On Windows PowerShell, the equivalents are `npm.cmd test` and `npm.cmd run visual-review`.
+## Tests
+
+Run all 42 regression tests with:
+
+```bash
+npm test
+```
+
+On Windows PowerShell, use `npm.cmd test` and `npm.cmd run visual-review`.

@@ -2,9 +2,16 @@
 
 These are deliberately deferred opportunities beyond the frozen portfolio prototype.
 
+## Product decisions reflected in the prototype
+
+- **One long-lived connection** — A separate Relationship object duplicated lifecycle state, so one connection now persists and changes stage from Meet & Greet through Trial Visit to Bonus Human.
+- **Two scheduling models** — One-off visits have their own date, time, and status. Recurring schedules store ongoing windows separately rather than treating every occurrence as the same kind of record.
+- **Contextual profile navigation** — Previous/Next browsing belongs to Discover. Profiles opened from requests, passed profiles, pets, or an established connection stay within that known context.
+- **Mutual requests create a connection** — One outgoing request remains pending. A connection begins only when interest is mutual; incoming and outgoing requests remain visibly distinct until then.
+
 ## Product / UX backlog
 
-- **Richer Connection cards and clearer notifications** — Current cards communicate stage and one preview, but notification meaning is limited. Explore clearer visit, message, and Care signals after real usage establishes priority; deferred to avoid inventing an unvalidated notification system.
+- **Richer connection cards and clearer notifications** — Current cards communicate stage and one preview, but notification meaning is limited. Explore clearer visit, message, and care signals after real usage establishes priority; deferred to avoid inventing an unvalidated notification system.
 - **Larger, richer Pet cards** — Pet summaries could surface more personality and high-value context. Test denser cards only after learning what people need before opening a Pet Profile; deferred to preserve a focused overview.
 - **Deeper role-specific experiences** — Pet Owner and Bonus Human modes currently act mainly as Discover lenses. Build differentiated dashboards and actions when role-specific needs are validated; deferred because the modes are intentional scaffolding.
 - **True pet management and editing** — Account → Manage pets currently leads to the Pets area. Add create/edit/archive flows when persistent data exists; deferred because local mocked state cannot represent safe pet-record management.

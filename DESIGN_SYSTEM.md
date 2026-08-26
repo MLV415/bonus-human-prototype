@@ -55,7 +55,7 @@ Subtabs have a line baseline, 46px minimum height, muted inactive labels, ink ac
 
 ## Cards and photos
 
-Cards represent objects or actionable units: Discover profiles, pets, Connections, Feed posts, and requested visits. Sections use typography, spacing, and dividers rather than nested cards.
+Cards represent objects or actionable units: Discover profiles, pets, connections, Feed posts, and requested visits. Sections use typography, spacing, and dividers rather than nested cards.
 
 Discover images are 300px high; person details 330px; pet heroes 300px; Feed images 245px. Use cover crops and keep faces in the central safe area. Photo tap advances; a white strip with subtle dots shows position. The Discover card body opens the profile; horizontal swipe visibly tracks the finger, reveals an adjacent card whose gallery stays mounted through promotion, animates out after threshold, and springs back at boundaries. Image and profile metadata transition as one unit. Photo interactions never trigger profile navigation or a connection request.
 
@@ -82,7 +82,7 @@ Inputs are white with a 1px line border, 12px radius, and 44px minimum. Scheduli
 
 ## Terminology and voice
 
-Canonical structural terms: **Connect, Request sent, Undo request, Wants to connect, You’re connected, Connected, Connection, Pet Owner, Bonus Human, Meet & Greet, Trial Visits, Profile, Care Guide, Feed, Account**. The final stage is **Bonus Human**, never “Regular Bonus Human.” Use **Bonus Humans** only as the plural role label for multiple people. Do not use Interest sent, Interested, Interested profiles, or Undo interested for connection requests. Avoid Match, Relationship, Association, and Pet Circle as competing objects. Use plain contextual wording such as “Zuki’s people.”
+Canonical structural terms: **Connect, Request sent, Undo request, Wants to connect, You’re connected, Connected, Connection, Pet Owner, Bonus Human, Meet & Greet, Trial Visits, Profile, Care Guide, Feed, Account**. Use lowercase “connection” in normal prose and capitalize literal UI labels such as **Connections** or **Connection stage**. The final stage is **Bonus Human**, never “Regular Bonus Human.” Use **Bonus Humans** only as the plural role label for multiple people. Do not use Interest sent, Interested, Interested profiles, or Undo interested for connection requests. Avoid Match, Relationship, Association, and Pet Circle as competing objects. Use plain contextual wording such as “Zuki’s people.”
 
 System copy should be warm, relationship-oriented, pet-first, neighborly, concise, trustworthy, and non-transactional. Use `&` within same-type groups and `+` between human and pet sides.
 
