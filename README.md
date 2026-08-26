@@ -1,6 +1,6 @@
 # Bonus Human
 
-Bonus Human is an AI-assisted working prototype for building pet-sharing relationships between Pet Owners and people who want animals in their lives without taking on full-time ownership. It explores ongoing relationships rather than paid pet care.
+Bonus Human is an AI-assisted working prototype for building pet-sharing relationships between pet owners and people who want animals in their lives without taking on full-time ownership. It explores ongoing relationships rather than paid pet care.
 
 <p align="center">
   <img src="visual-review/screenshots/01-discover-neutral.png" alt="Bonus Human Discover screen showing Haley and Ari with compatibility details and profile actions" width="320">
@@ -8,14 +8,16 @@ Bonus Human is an AI-assisted working prototype for building pet-sharing relatio
 
 ## Why this exists
 
-As Zuki grew older, her changing care needs made personalized, consistent support more important than a typical sitting arrangement could always provide. At the same time, Mike met people nearby who liked the idea of a part-time pet. He tested that premise manually through Facebook, Nextdoor, flyers, and conversations with more than a dozen people.
+When Zuki turned 16, it was getting harder to find the care she needed. Her physical and mental needs were changing, and I wanted to find a way to mirror the special care she got from me while still finding the freedom to live my own life.
 
-Those conversations shaped the product question: how might nearby people find a compatible fit, build trust, coordinate care, and form an ongoing “bonus human” relationship?
+As I talked to people in my community, I realized many of them were excited about the idea of a part-time pet. They loved animals, but couldn't make the financial, daily, or long-term commitment of ownership.
+
+I made posts on Facebook and Nextdoor, put up flyers, and interviewed over a dozen people. Through those conversations, I kept coming back to the same questions: how could I make it easier to connect with people nearby, manage scheduling and care details, build trust with someone new, and ultimately find Zuki a “bonus human”?
 
 ## Product model
 
 - People discover nearby Pet Owners or Bonus Humans using compatibility details and filters.
-- Sending a request records one person’s intent; mutual requests create a connection.
+- Sending a request records one person's intent; mutual requests create a connection.
 - One connection persists as trust progresses through **Meet & Greet → Trial Visit → Bonus Human**.
 - Messaging, scheduling, care information, and pet updates stay in the pet and connection context.
 - The intended outcome is an ongoing pet-sharing relationship, not a one-time transaction.
@@ -34,8 +36,8 @@ Discover includes Pet Owner and Bonus Human modes, profile browsing, compatibili
 ## Core experiences
 
 - **Scheduling:** recurring schedules, one-off visits, and a compact current-week view.
-- **Care:** Zuki’s routine, food, medication, veterinary details, and emergency information.
-- **Pet Feed + Chat:** a feed for private pet-centered photos and updates, plus chat for coordination and details.
+- **Care:** routine, food, medication, veterinary details, and emergency information stay easy to find.
+- **Pet Feed + Chat:** photos and updates live in the Pet Feed, while Pet Chat handles coordination and details.
 
 <p align="center">
   <img src="visual-review/screenshots/16a-schedule-one-off-recurring-sections.png" alt="Haley and Ari’s connection schedule showing upcoming visits and recurring time together" width="320">
@@ -44,7 +46,9 @@ Discover includes Pet Owner and Bonus Human modes, profile browsing, compatibili
 
 ## Implementation
 
-The prototype uses React Native, Expo SDK 54, React, and mocked local state. OpenAI Codex supported the implementation workflow while Mike directed the product model, scope, UX decisions, review cycles, and quality bar.
+I used React Native, Expo SDK 54, React, and mocked local state to turn the product decisions into a working prototype.
+
+I used OpenAI Codex for AI-assisted implementation while I directed the product model, scope, UX decisions, review cycles, and quality bar.
 
 Validation includes 42 automated regression tests with Jest and React Native Testing Library, repeated physical-iPhone QA in Expo Go, and a repeatable Playwright-based visual-review workflow that produces consistent PNG, SVG, contact-sheet, and PDF artifacts.
 
@@ -52,22 +56,26 @@ The current product and visual decisions are documented in [PRODUCT_DESIGN.md](P
 
 ## What changed through testing
 
-- A separate Relationship object was removed in favor of one long-lived connection whose stage changes over time.
-- One-off visits were separated from recurring schedules so occasional and ongoing time remain distinct.
-- Previous/Next profile browsing was limited to Discover; known-profile and established-connection contexts use scoped navigation.
-- Request and lifecycle language was clarified so one request remains pending and only mutual intent creates a connection.
+Prototyping helped me make structural product decisions rather than just polish individual screens:
+
+- I removed a separate Relationship object in favor of one long-lived connection whose stage changes over time.
+- I separated one-off visits from recurring schedules so occasional and ongoing time remain distinct.
+- I limited Previous/Next profile browsing to Discover; known-profile and established-connection contexts use scoped navigation.
+- I clarified request and lifecycle behavior so one request remains pending and only mutual intent creates a connection.
 
 ## Deliberate boundaries
 
-This portfolio prototype deliberately excludes:
+I deliberately kept this prototype focused. It does not include:
 
 - production authentication and backend services
 - payments
 - a full calendar visualization
 - scheduling conflict detection
 - full pet-record creation and editing
+- production messaging or notifications
+- location tracking
 
-It also does not provide production messaging, notifications, or location tracking. Data is mocked locally and state resets when the app reloads.
+Data is mocked locally and state resets when the app reloads.
 
 ## Running locally
 
