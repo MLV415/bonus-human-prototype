@@ -86,6 +86,10 @@ Canonical structural terms: **Connect, Request sent, Undo request, Wants to conn
 
 System copy should be warm, relationship-oriented, pet-first, neighborly, concise, trustworthy, and non-transactional. Use `&` within same-type groups and `+` between human and pet sides.
 
+## Web prototype presentation
+
+The browser demo preserves the mobile-app composition in a centered 520px maximum-width shell instead of stretching screens across desktop windows. Bottom sheets use the same 520px maximum on desktop while their scrims cover the full viewport; on mobile browsers they remain full width. Web-native date and time inputs use border-box sizing so their 100% width stays inside sheet padding. A quiet **INTERACTIVE PROTOTYPE** label appears beside the wordmark on top-level web screens and is not shown in the iPhone app.
+
 ## Spacing and constraints
 
 Screen horizontal padding: 20px. Section spacing: about 26px before/14px after. Object padding: 12–18px. Bottom breathing room: 34px. Pills are fully rounded; inputs/compact controls 10–14px; object cards 14–18px; heroes 22–24px.

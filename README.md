@@ -136,6 +136,14 @@ npx expo start --clear
 
 On Windows PowerShell, use `npm.cmd install` and `npx.cmd expo start --clear` if script aliases are unavailable. Scan the QR code with Expo Go or press `w` for the web preview.
 
+Build the static web prototype with:
+
+```bash
+npm run build:web
+```
+
+The deployable output is written to `dist/`. The web build uses the same mocked local state as the Expo prototype and does not require environment variables or backend services.
+
 Regenerate the visual-review artifacts with:
 
 ```bash
