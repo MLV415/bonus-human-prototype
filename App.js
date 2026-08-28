@@ -14,9 +14,11 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useFonts } from 'expo-font';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
+const ioniconsFont = require('./assets/Ionicons.ttf');
 const zukiImage = require('./assets/zuki.png');
 const zukiWalkImage = require('./assets/zuki-walk.png');
 const peopleImage = require('./assets/haley-ari.png');
@@ -148,6 +150,10 @@ function Button({ label, onPress, tone = 'primary', small = false, disabled = fa
 function Pill({ children, warm = false }) { return <View style={[styles.pill, warm && styles.pillWarm]}><Text style={[styles.pillText, warm && { color: C.clay }]}>{children}</Text></View>; }
 function SectionTitle({ eyebrow, title, right }) { return <View style={styles.sectionTitle}><View style={styles.sectionTitleCopy}><Text style={styles.eyebrow}>{eyebrow}</Text><Text style={styles.h2}>{title}</Text></View>{right}</View>; }
 function StatusLabel({ children, tone = 'neutral' }) { return <View style={[styles.statusLabel, styles[`statusLabel_${tone}`]]}><Text style={[styles.statusLabelText, styles[`statusLabelText_${tone}`]]}>{children}</Text></View>; }
+function WebIconFontGate({ children }) {
+  const [loaded] = useFonts({ ionicons: ioniconsFont });
+  return loaded ? children : <View style={styles.webFontLoading} />;
+}
 function BrandWordmark() {
   if (Platform.OS !== 'web') return <Text style={styles.wordmark}>bonus human</Text>;
   return <View style={styles.webWordmarkRow}><Text style={styles.wordmark}>bonus human</Text><Text style={styles.webPrototypeLabel}>INTERACTIVE PROTOTYPE</Text></View>;
@@ -696,11 +702,13 @@ export default function App({ initialConnection = INITIAL_CONNECTION }) {
     : tab === 'connections' ? <Connections mode={mode} decisions={decisions} setDecision={setDecision} incomingInterest={incomingInterest} onOpen={profile => openPerson(profile)} profiles={profiles} connection={connection} onOpenConnection={profile => openConnection(profile)} onDiscover={() => selectTab('discover')} />
     : tab === 'feed' ? <Feed />
     : <Account mode={mode} onModeChange={setMode} profile={profiles.find(profile => profile.id === 'mike')} onSaveProfile={updated => setProfiles(current => current.map(profile => profile.id === updated.id ? updated : profile))} onManagePets={() => selectTab('pets')} />;
-  return <SafeAreaView style={styles.safe}><StatusBar barStyle="dark-content" backgroundColor={C.paper} /><View style={styles.appShell}>{content}{!detail && <View style={styles.tabBar}>{tabs.map(({ id, icon, activeIcon, label }) => <Pressable accessibilityRole="button" accessibilityLabel={`${label} tab`} key={id} onPress={() => selectTab(id)} style={styles.tab}><Ionicons name={tab === id ? activeIcon : icon} size={22} color={tab === id ? C.sage : '#7E8982'} style={styles.tabIcon} /><Text style={[styles.tabLabel, tab === id && styles.tabActive]}>{label}</Text>{tab === id && <View style={styles.tabDot} />}</Pressable>)}</View>}</View></SafeAreaView>;
+  const app = <SafeAreaView style={styles.safe}><StatusBar barStyle="dark-content" backgroundColor={C.paper} /><View style={styles.appShell}>{content}{!detail && <View style={styles.tabBar}>{tabs.map(({ id, icon, activeIcon, label }) => <Pressable accessibilityRole="button" accessibilityLabel={`${label} tab`} key={id} onPress={() => selectTab(id)} style={styles.tab}><Ionicons name={tab === id ? activeIcon : icon} size={22} color={tab === id ? C.sage : '#7E8982'} style={styles.tabIcon} /><Text style={[styles.tabLabel, tab === id && styles.tabActive]}>{label}</Text>{tab === id && <View style={styles.tabDot} />}</Pressable>)}</View>}</View></SafeAreaView>;
+  return Platform.OS === 'web' ? <WebIconFontGate>{app}</WebIconFontGate> : app;
 }
 
 const styles = StyleSheet.create({
   srOnly: { position: 'absolute', width: 1, height: 1, opacity: 0 },
+  webFontLoading: { flex: 1, backgroundColor: C.paper },
   safe: { flex: 1, backgroundColor: C.paper }, flex: { flex: 1 }, appShell: { flex: 1, width: '100%', maxWidth: 520, alignSelf: 'center', backgroundColor: C.paper },
   screen: { paddingHorizontal: 20, paddingBottom: 34 }, screenFlush: { paddingBottom: 34 },
   topBar: { height: 58, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: C.line, backgroundColor: C.paper },
