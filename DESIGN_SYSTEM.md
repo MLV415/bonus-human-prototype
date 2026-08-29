@@ -57,7 +57,7 @@ Subtabs have a line baseline, 46px minimum height, muted inactive labels, ink ac
 
 Cards represent objects or actionable units: Discover profiles, pets, connections, Feed posts, and requested visits. Sections use typography, spacing, and dividers rather than nested cards.
 
-Discover images are 300px high; person details 330px; pet heroes 300px; Feed images 245px. Use cover crops and keep faces in the central safe area. Photo tap advances; a white strip with subtle dots shows position. The Discover card body opens the profile; horizontal swipe visibly tracks the finger, reveals an adjacent card whose gallery stays mounted through promotion, animates out after threshold, and springs back at boundaries. Image and profile metadata transition as one unit. Photo interactions never trigger profile navigation or a connection request.
+Discover images are 300px high; person details 330px; pet heroes 300px; Feed images 245px. The same fixed heights are retained on web to match the approved mobile composition; the desktop presentation frame stays close to mobile width so cover crops do not drift excessively. Use cover crops and keep faces in the central safe area. Photo tap advances; a white strip with subtle dots shows position. The Discover card body opens the profile; horizontal swipe visibly tracks the finger, reveals an adjacent card whose gallery stays mounted through promotion, animates out after threshold, and springs back at boundaries. Image and profile metadata transition as one unit. Photo interactions never trigger profile navigation or a connection request.
 
 ## Filters and profile tags
 
@@ -88,7 +88,7 @@ System copy should be warm, relationship-oriented, pet-first, neighborly, concis
 
 ## Web prototype presentation
 
-The browser demo preserves the mobile-app composition in a centered 520px maximum-width shell instead of stretching screens across desktop windows. Bottom sheets use the same 520px maximum on desktop while their scrims cover the full viewport; on mobile browsers they remain full width. Web-native date and time inputs use border-box sizing so their 100% width stays inside sheet padding. A quiet **INTERACTIVE PROTOTYPE** label appears beside the wordmark on top-level web screens and is not shown in the iPhone app.
+At widths below 768px, the browser demo fills the viewport and follows the approved 390px mobile composition without a decorative shell. At tablet and desktop widths, it uses a centered 430px app frame on a warm neutral canvas with a subtle border, rounded corners, and shadow. The frame is no taller than 844px, its content scrolls internally, and bottom navigation remains attached to it. Sheets and dialogs are constrained to the same frame on larger screens and remain full-viewport on mobile. Web-native date and time inputs use border-box sizing so their 100% width stays inside sheet padding. The top-level wordmark is identical on web and iPhone; no extra prototype label is appended to it.
 
 ## Spacing and constraints
 
